@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<OpenSimDocument Version="40000">
+	<ExternalLoads>
+		<objects>
+			<ExternalForce name="FT26943">
+				<!--Name of the body the force is applied to.-->
+				<applied_to_body>foot_r</applied_to_body>
+				<!--Name of the body the force is expressed in (default is ground).-->
+				<force_expressed_in_body>ground</force_expressed_in_body>
+				<!--Name of the body the point is expressed in (default is ground).-->
+				<point_expressed_in_body>ground</point_expressed_in_body>
+				<!--Identifier (string) to locate the force to be applied in the data source.-->
+				<force_identifier>force3_v</force_identifier>
+				<!--Identifier (string) to locate the point to be applied in the data source.-->
+				<point_identifier>force3_p</point_identifier>
+				<!--Identifier (string) to locate the torque to be applied in the data source.-->
+				<torque_identifier>moment3_</torque_identifier>
+				<!--Name of the data source (Storage) that will supply the force data.-->
+				<data_source_name>BAA01_Baseline_Walk05_FP.mot</data_source_name>
+			</ExternalForce>
+			<ExternalForce name="FT26944">
+				<!--Name of the body the force is applied to.-->
+				<applied_to_body>foot_l</applied_to_body>
+				<!--Name of the body the force is expressed in (default is ground).-->
+				<force_expressed_in_body>ground</force_expressed_in_body>
+				<!--Name of the body the point is expressed in (default is ground).-->
+				<point_expressed_in_body>ground</point_expressed_in_body>
+				<!--Identifier (string) to locate the force to be applied in the data source.-->
+				<force_identifier>force4_v</force_identifier>
+				<!--Identifier (string) to locate the point to be applied in the data source.-->
+				<point_identifier>force4_p</point_identifier>
+				<!--Identifier (string) to locate the torque to be applied in the data source.-->
+				<torque_identifier>moment4_</torque_identifier>
+				<!--Name of the data source (Storage) that will supply the force data.-->
+				<data_source_name>BAA01_Baseline_Walk05_FP.mot</data_source_name>
+			</ExternalForce>
+		</objects>
+		<groups />
+		<!--Storage file (.sto) containing (3) components of force and/or torque and point of application.Note: this file overrides the data source specified by the individual external forces if specified.-->
+		<datafile>BAA01_Baseline_Walk05_FP.mot</datafile>
+	</ExternalLoads>
+</OpenSimDocument>

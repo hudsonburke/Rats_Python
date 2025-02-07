@@ -1,0 +1,2128 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<ParamStore>
+
+  <ParamDefinitionList name="Capture">
+    <ParamListGroup name="">
+      <ParamList name="default">
+        <Param name="BufferRangeInSeconds" value="5.0149999999999997"/>
+        <Param name="BufferLatencyInSeconds" value="0.32999999999999996"/>
+        <Param name="MeasuredFrameRate" value="0"/>
+        <Param name="FramesCaptured" value="945"/>
+        <Param name="FramesDropped" value="0"/>
+        <Param name="ErrorString" value=""/>
+        <Param name="ArmedStatus" value="true"/>
+        <Param name="TimeCapturedString" value=""/>
+        <Param name="LowDiskSpace"/>
+      </ParamList>
+    </ParamListGroup>
+  </ParamDefinitionList>
+
+  <ParamDefinitionList name="Device::Bertec Force Plate">
+    <ParamListGroup name="">
+      <ParamList name="Device::423ae524b85d00039b056795338e15ad">
+        <Param name="UserID" value="1"/>
+        <Param name="DeviceName" value="FT 19966"/>
+        <Param name="Connected" value="true"/>
+        <Param name="DelayCompensation" value="0"/>
+        <Param name="DeviceReady" value="true"/>
+        <Param name="SourceName" value="37749602:0"/>
+        <Param name="Connectivity" value="Analogue"/>
+        <Param name="SourceID" value="1"/>
+        <Param name="SourceStatus" value="Ok"/>
+        <Param name="DeviceFamily" value="Bertec Force Plate"/>
+        <Param name="DeviceTag" value="423ae524b85d00039b056795338e15ad"/>
+        <Param name="DeviceID" value="3"/>
+        <Param name="DeviceCategory" value="Force Plate"/>
+        <Param name="FramePeriod" value="675000"/>
+        <Param name="SamplePeriod" value="135000"/>
+        <Param name="Visible" value="true"/>
+        <Param name="AlwaysShow" value="true"/>
+        <Param name="SourceGain" value="10"/>
+        <Param name="Fill" value="false"/>
+        <Param name="Clear" value="false"/>
+        <Param name="SourcePin0" value="9"/>
+        <Param name="SourcePin1" value="10"/>
+        <Param name="SourcePin2" value="11"/>
+        <Param name="SourcePin3" value="12"/>
+        <Param name="SourcePin4" value="13"/>
+        <Param name="SourcePin5" value="14"/>
+        <Param name="CalibrationFile" value=""/>
+        <Param name="CalibrationMatrix" value="-0.00969 -0.01413 -0.02387 1.12119 0.03265 -1.14735 &#xA;0.02419 -1.30137 -0.01267 0.65098 -0.00895 0.67149 &#xA;0.74569 0.02183 0.78403 0.00027 0.7754 0.02071 &#xA;0.0001179 -0.0057037 0.0111868 0.0029344 -0.0112643 0.0026303 &#xA;-0.0124581 -0.0003321 0.006598 -0.0048643 0.0062886 0.005228 &#xA;0.0002608 -0.0085933 0.0001854 -0.0085042 0.000276 -0.0089816 &#xA;"/>
+        <Param name="ZeroLevel" value="-1.41595 1.75377 -1.64698 -1.64389 -0.352543 -0.117746 &#xA;"/>
+        <Param name="CorrectionFactor" value="1"/>
+        <Param name="ForceThreshold" value="0.00999999978"/>
+        <Param name="XLength" value="0.063500002"/>
+        <Param name="YLength" value="0.114300005"/>
+        <Param name="XPosition" value="-0.031750001"/>
+        <Param name="YPosition" value="0"/>
+        <Param name="ZPosition" value="-0.00300000003"/>
+        <Param name="XRotation" value="0"/>
+        <Param name="YRotation" value="3.1415925"/>
+        <Param name="ZRotation" value="0"/>
+        <Param name="XOrigin" value="0"/>
+        <Param name="YOrigin" value="0"/>
+        <Param name="ZOrigin" value="0"/>
+        <Param name="RawVisible" value="false"/>
+      </ParamList>
+      <ParamList name="Device::920e12bb19b3f1a64f4aab83da47c52c">
+        <Param name="UserID" value="0"/>
+        <Param name="DeviceName" value="FT 19965"/>
+        <Param name="Connected" value="true"/>
+        <Param name="DelayCompensation" value="0"/>
+        <Param name="DeviceReady" value="true"/>
+        <Param name="SourceName" value="37749602:0"/>
+        <Param name="Connectivity" value="Analogue"/>
+        <Param name="SourceID" value="1"/>
+        <Param name="SourceStatus" value="Ok"/>
+        <Param name="DeviceFamily" value="Bertec Force Plate"/>
+        <Param name="DeviceTag" value="920e12bb19b3f1a64f4aab83da47c52c"/>
+        <Param name="DeviceID" value="2"/>
+        <Param name="DeviceCategory" value="Force Plate"/>
+        <Param name="FramePeriod" value="675000"/>
+        <Param name="SamplePeriod" value="135000"/>
+        <Param name="Visible" value="true"/>
+        <Param name="AlwaysShow" value="true"/>
+        <Param name="SourceGain" value="10"/>
+        <Param name="Fill" value="false"/>
+        <Param name="Clear" value="false"/>
+        <Param name="SourcePin0" value="1"/>
+        <Param name="SourcePin1" value="2"/>
+        <Param name="SourcePin2" value="3"/>
+        <Param name="SourcePin3" value="4"/>
+        <Param name="SourcePin4" value="5"/>
+        <Param name="SourcePin5" value="6"/>
+        <Param name="CalibrationFile" value=""/>
+        <Param name="CalibrationMatrix" value="0.01204 0.00818 0.00244 -1.16358 0.00452 1.17189 &#xA;0.01079 1.24706 0.02194 -0.66306 -0.01193 -0.66689 &#xA;-0.75642 0.00096 -0.78335 0.00273 -0.77458 -0.00744 &#xA;-7.2e-06 0.0055096 -0.0112037 -0.0029959 0.0111912 -0.0027644 &#xA;0.0125856 4.51e-05 -0.0065576 0.0051112 -0.0063929 -0.0052652 &#xA;9.83e-05 0.0083152 -9.86e-05 0.008688 -7.81e-05 0.0088607 &#xA;"/>
+        <Param name="ZeroLevel" value="1.57929 -1.86329 2.32281 -0.0321918 0.537779 4.51925 &#xA;"/>
+        <Param name="CorrectionFactor" value="1"/>
+        <Param name="ForceThreshold" value="0.00999999978"/>
+        <Param name="XLength" value="0.063500002"/>
+        <Param name="YLength" value="0.114300005"/>
+        <Param name="XPosition" value="-0.095250003"/>
+        <Param name="YPosition" value="0"/>
+        <Param name="ZPosition" value="-0.00300000003"/>
+        <Param name="XRotation" value="0"/>
+        <Param name="YRotation" value="3.1415925"/>
+        <Param name="ZRotation" value="0"/>
+        <Param name="XOrigin" value="0"/>
+        <Param name="YOrigin" value="0"/>
+        <Param name="ZOrigin" value="0"/>
+        <Param name="RawVisible" value="false"/>
+      </ParamList>
+      <ParamList name="Device::c01b8b993a7a6916c1aff47ef81116aa">
+        <Param name="UserID" value="3"/>
+        <Param name="DeviceName" value="FT 26944"/>
+        <Param name="Connected" value="true"/>
+        <Param name="DelayCompensation" value="0"/>
+        <Param name="DeviceReady" value="true"/>
+        <Param name="SourceName" value="37749602:0"/>
+        <Param name="Connectivity" value="Analogue"/>
+        <Param name="SourceID" value="1"/>
+        <Param name="SourceStatus" value="Ok"/>
+        <Param name="DeviceFamily" value="Bertec Force Plate"/>
+        <Param name="DeviceTag" value="c01b8b993a7a6916c1aff47ef81116aa"/>
+        <Param name="DeviceID" value="5"/>
+        <Param name="DeviceCategory" value="Force Plate"/>
+        <Param name="FramePeriod" value="675000"/>
+        <Param name="SamplePeriod" value="135000"/>
+        <Param name="Visible" value="true"/>
+        <Param name="AlwaysShow" value="true"/>
+        <Param name="SourceGain" value="10"/>
+        <Param name="Fill" value="false"/>
+        <Param name="Clear" value="false"/>
+        <Param name="SourcePin0" value="25"/>
+        <Param name="SourcePin1" value="26"/>
+        <Param name="SourcePin2" value="27"/>
+        <Param name="SourcePin3" value="28"/>
+        <Param name="SourcePin4" value="29"/>
+        <Param name="SourcePin5" value="30"/>
+        <Param name="CalibrationFile"/>
+        <Param name="CalibrationMatrix" value="0.0045 0.00769 0.09286 1.1042 -0.06402 -1.09955 &#xA;-0.01471 -1.31608 0.04775 0.6391 0.04323 0.63302 &#xA;0.74558 -0.04257 0.77058 -0.0145 0.77252 -0.02661 &#xA;-9.52e-05 -0.0059592 0.0114042 0.0025844 -0.0109968 0.0031877 &#xA;-0.0125962 0.0007283 0.0061495 -0.0050385 0.0067362 0.0046234 &#xA;-9.78e-05 -0.0093142 -0.0007482 -0.0091453 -0.0005206 -0.0089803 &#xA;"/>
+        <Param name="ZeroLevel" value="-0.819481 0.00131775 -0.230012 -1.33249 -0.372487 -0.413353 &#xA;"/>
+        <Param name="CorrectionFactor" value="1"/>
+        <Param name="ForceThreshold" value="0.00999999978"/>
+        <Param name="XLength" value="0.063500002"/>
+        <Param name="YLength" value="0.114300005"/>
+        <Param name="XPosition" value="0.095250003"/>
+        <Param name="YPosition" value="0"/>
+        <Param name="ZPosition" value="-0.00300000003"/>
+        <Param name="XRotation" value="0"/>
+        <Param name="YRotation" value="3.1415925"/>
+        <Param name="ZRotation" value="0"/>
+        <Param name="XOrigin" value="0"/>
+        <Param name="YOrigin" value="0"/>
+        <Param name="ZOrigin" value="0"/>
+        <Param name="RawVisible" value="false"/>
+      </ParamList>
+      <ParamList name="Device::d36f847e9bddec44d611949ce2210cbc">
+        <Param name="UserID" value="2"/>
+        <Param name="DeviceName" value="FT 26943"/>
+        <Param name="Connected" value="true"/>
+        <Param name="DelayCompensation" value="0"/>
+        <Param name="DeviceReady" value="true"/>
+        <Param name="SourceName" value="37749602:0"/>
+        <Param name="Connectivity" value="Analogue"/>
+        <Param name="SourceID" value="1"/>
+        <Param name="SourceStatus" value="Ok"/>
+        <Param name="DeviceFamily" value="Bertec Force Plate"/>
+        <Param name="DeviceTag" value="d36f847e9bddec44d611949ce2210cbc"/>
+        <Param name="DeviceID" value="4"/>
+        <Param name="DeviceCategory" value="Force Plate"/>
+        <Param name="FramePeriod" value="675000"/>
+        <Param name="SamplePeriod" value="135000"/>
+        <Param name="Visible" value="true"/>
+        <Param name="AlwaysShow" value="true"/>
+        <Param name="SourceGain" value="10"/>
+        <Param name="Fill" value="false"/>
+        <Param name="Clear" value="false"/>
+        <Param name="SourcePin0" value="17"/>
+        <Param name="SourcePin1" value="18"/>
+        <Param name="SourcePin2" value="19"/>
+        <Param name="SourcePin3" value="20"/>
+        <Param name="SourcePin4" value="21"/>
+        <Param name="SourcePin5" value="22"/>
+        <Param name="CalibrationFile"/>
+        <Param name="CalibrationMatrix" value="0.00151 0.01738 0.09307 1.19211 -0.04104 -1.14137 &#xA;-0.0818 -1.30935 0.04616 0.65499 0.01835 0.64732 &#xA;0.73064 -0.02818 0.77859 -0.05566 0.75555 -0.0434 &#xA;-0.0004581 -0.0057978 0.0113971 0.0020345 -0.0109964 0.0035549 &#xA;-0.0123714 0.0004727 0.0059931 -0.0057242 0.0065723 0.0046283 &#xA;-0.0006741 -0.0096824 -0.0006116 -0.0096227 -0.0003397 -0.009107 &#xA;"/>
+        <Param name="ZeroLevel" value="-0.690255 0.577896 -0.339366 0.836095 -0.0969428 -1.21128 &#xA;"/>
+        <Param name="CorrectionFactor" value="1"/>
+        <Param name="ForceThreshold" value="0.00999999978"/>
+        <Param name="XLength" value="0.063500002"/>
+        <Param name="YLength" value="0.114300005"/>
+        <Param name="XPosition" value="0.031750001"/>
+        <Param name="YPosition" value="0"/>
+        <Param name="ZPosition" value="-0.00300000003"/>
+        <Param name="XRotation" value="0"/>
+        <Param name="YRotation" value="3.1415925"/>
+        <Param name="ZRotation" value="0"/>
+        <Param name="XOrigin" value="0"/>
+        <Param name="YOrigin" value="0"/>
+        <Param name="ZOrigin" value="0"/>
+        <Param name="RawVisible" value="true"/>
+      </ParamList>
+    </ParamListGroup>
+  </ParamDefinitionList>
+
+  <ParamDefinitionList name="DeviceOutput::Bertec Force Plate::CoP">
+    <ParamListGroup name="">
+      <ParamList name="DeviceOutput::423ae524b85d00039b056795338e15ad,3">
+        <Param name="DeviceOutputName" value="CoP"/>
+        <Param name="DeviceOutputReady" value="true"/>
+        <Param name="Connected" value="true"/>
+        <Param name="Visible" value="true"/>
+        <Param name="DeviceTag" value="423ae524b85d00039b056795338e15ad"/>
+        <Param name="DeviceID" value="3"/>
+        <Param name="DeviceOutputID" value="3"/>
+        <Param name="DeviceOutputType" value="CoP"/>
+        <Param name="DeviceOutputQuantity" value="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0"/>
+      </ParamList>
+      <ParamList name="DeviceOutput::920e12bb19b3f1a64f4aab83da47c52c,3">
+        <Param name="DeviceOutputName" value="CoP"/>
+        <Param name="DeviceOutputReady" value="true"/>
+        <Param name="Connected" value="true"/>
+        <Param name="Visible" value="true"/>
+        <Param name="DeviceTag" value="920e12bb19b3f1a64f4aab83da47c52c"/>
+        <Param name="DeviceID" value="2"/>
+        <Param name="DeviceOutputID" value="3"/>
+        <Param name="DeviceOutputType" value="CoP"/>
+        <Param name="DeviceOutputQuantity" value="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0"/>
+      </ParamList>
+      <ParamList name="DeviceOutput::c01b8b993a7a6916c1aff47ef81116aa,3">
+        <Param name="DeviceOutputName" value="CoP"/>
+        <Param name="DeviceOutputReady" value="true"/>
+        <Param name="Connected" value="true"/>
+        <Param name="Visible" value="true"/>
+        <Param name="DeviceTag" value="c01b8b993a7a6916c1aff47ef81116aa"/>
+        <Param name="DeviceID" value="5"/>
+        <Param name="DeviceOutputID" value="3"/>
+        <Param name="DeviceOutputType" value="CoP"/>
+        <Param name="DeviceOutputQuantity" value="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0"/>
+      </ParamList>
+      <ParamList name="DeviceOutput::d36f847e9bddec44d611949ce2210cbc,3">
+        <Param name="DeviceOutputName" value="CoP"/>
+        <Param name="DeviceOutputReady" value="true"/>
+        <Param name="Connected" value="true"/>
+        <Param name="Visible" value="true"/>
+        <Param name="DeviceTag" value="d36f847e9bddec44d611949ce2210cbc"/>
+        <Param name="DeviceID" value="4"/>
+        <Param name="DeviceOutputID" value="3"/>
+        <Param name="DeviceOutputType" value="CoP"/>
+        <Param name="DeviceOutputQuantity" value="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0"/>
+      </ParamList>
+    </ParamListGroup>
+  </ParamDefinitionList>
+
+  <ParamDefinitionList name="DeviceOutput::Bertec Force Plate::Force">
+    <ParamListGroup name="">
+      <ParamList name="DeviceOutput::423ae524b85d00039b056795338e15ad,1">
+        <Param name="DeviceOutputName" value="Force"/>
+        <Param name="DeviceOutputReady" value="true"/>
+        <Param name="Connected" value="true"/>
+        <Param name="Visible" value="true"/>
+        <Param name="DeviceTag" value="423ae524b85d00039b056795338e15ad"/>
+        <Param name="DeviceID" value="3"/>
+        <Param name="DeviceOutputID" value="1"/>
+        <Param name="DeviceOutputType" value="Force"/>
+        <Param name="DeviceOutputQuantity" value="0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0"/>
+      </ParamList>
+      <ParamList name="DeviceOutput::920e12bb19b3f1a64f4aab83da47c52c,1">
+        <Param name="DeviceOutputName" value="Force"/>
+        <Param name="DeviceOutputReady" value="true"/>
+        <Param name="Connected" value="true"/>
+        <Param name="Visible" value="true"/>
+        <Param name="DeviceTag" value="920e12bb19b3f1a64f4aab83da47c52c"/>
+        <Param name="DeviceID" value="2"/>
+        <Param name="DeviceOutputID" value="1"/>
+        <Param name="DeviceOutputType" value="Force"/>
+        <Param name="DeviceOutputQuantity" value="0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0"/>
+      </ParamList>
+      <ParamList name="DeviceOutput::c01b8b993a7a6916c1aff47ef81116aa,1">
+        <Param name="DeviceOutputName" value="Force"/>
+        <Param name="DeviceOutputReady" value="true"/>
+        <Param name="Connected" value="true"/>
+        <Param name="Visible" value="true"/>
+        <Param name="DeviceTag" value="c01b8b993a7a6916c1aff47ef81116aa"/>
+        <Param name="DeviceID" value="5"/>
+        <Param name="DeviceOutputID" value="1"/>
+        <Param name="DeviceOutputType" value="Force"/>
+        <Param name="DeviceOutputQuantity" value="0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0"/>
+      </ParamList>
+      <ParamList name="DeviceOutput::d36f847e9bddec44d611949ce2210cbc,1">
+        <Param name="DeviceOutputName" value="Force"/>
+        <Param name="DeviceOutputReady" value="true"/>
+        <Param name="Connected" value="true"/>
+        <Param name="Visible" value="true"/>
+        <Param name="DeviceTag" value="d36f847e9bddec44d611949ce2210cbc"/>
+        <Param name="DeviceID" value="4"/>
+        <Param name="DeviceOutputID" value="1"/>
+        <Param name="DeviceOutputType" value="Force"/>
+        <Param name="DeviceOutputQuantity" value="0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0"/>
+      </ParamList>
+    </ParamListGroup>
+  </ParamDefinitionList>
+
+  <ParamDefinitionList name="DeviceOutput::Bertec Force Plate::Moment">
+    <ParamListGroup name="">
+      <ParamList name="DeviceOutput::423ae524b85d00039b056795338e15ad,2">
+        <Param name="DeviceOutputName" value="Moment"/>
+        <Param name="DeviceOutputReady" value="true"/>
+        <Param name="Connected" value="true"/>
+        <Param name="Visible" value="true"/>
+        <Param name="DeviceTag" value="423ae524b85d00039b056795338e15ad"/>
+        <Param name="DeviceID" value="3"/>
+        <Param name="DeviceOutputID" value="2"/>
+        <Param name="DeviceOutputType" value="Moment"/>
+        <Param name="DeviceOutputQuantity" value="0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0"/>
+      </ParamList>
+      <ParamList name="DeviceOutput::920e12bb19b3f1a64f4aab83da47c52c,2">
+        <Param name="DeviceOutputName" value="Moment"/>
+        <Param name="DeviceOutputReady" value="true"/>
+        <Param name="Connected" value="true"/>
+        <Param name="Visible" value="true"/>
+        <Param name="DeviceTag" value="920e12bb19b3f1a64f4aab83da47c52c"/>
+        <Param name="DeviceID" value="2"/>
+        <Param name="DeviceOutputID" value="2"/>
+        <Param name="DeviceOutputType" value="Moment"/>
+        <Param name="DeviceOutputQuantity" value="0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0"/>
+      </ParamList>
+      <ParamList name="DeviceOutput::c01b8b993a7a6916c1aff47ef81116aa,2">
+        <Param name="DeviceOutputName" value="Moment"/>
+        <Param name="DeviceOutputReady" value="true"/>
+        <Param name="Connected" value="true"/>
+        <Param name="Visible" value="true"/>
+        <Param name="DeviceTag" value="c01b8b993a7a6916c1aff47ef81116aa"/>
+        <Param name="DeviceID" value="5"/>
+        <Param name="DeviceOutputID" value="2"/>
+        <Param name="DeviceOutputType" value="Moment"/>
+        <Param name="DeviceOutputQuantity" value="0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0"/>
+      </ParamList>
+      <ParamList name="DeviceOutput::d36f847e9bddec44d611949ce2210cbc,2">
+        <Param name="DeviceOutputName" value="Moment"/>
+        <Param name="DeviceOutputReady" value="true"/>
+        <Param name="Connected" value="true"/>
+        <Param name="Visible" value="true"/>
+        <Param name="DeviceTag" value="d36f847e9bddec44d611949ce2210cbc"/>
+        <Param name="DeviceID" value="4"/>
+        <Param name="DeviceOutputID" value="2"/>
+        <Param name="DeviceOutputType" value="Moment"/>
+        <Param name="DeviceOutputQuantity" value="0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0"/>
+      </ParamList>
+    </ParamListGroup>
+  </ParamDefinitionList>
+
+  <ParamDefinitionList name="DeviceOutput::Bertec Force Plate::Raw">
+    <ParamListGroup name="">
+      <ParamList name="DeviceOutput::d36f847e9bddec44d611949ce2210cbc,4">
+        <Param name="DeviceOutputName" value="Raw"/>
+        <Param name="DeviceOutputReady" value="true"/>
+        <Param name="Connected" value="true"/>
+        <Param name="Visible" value="true"/>
+        <Param name="DeviceTag" value="d36f847e9bddec44d611949ce2210cbc"/>
+        <Param name="DeviceID" value="4"/>
+        <Param name="DeviceOutputID" value="4"/>
+        <Param name="DeviceOutputType" value="Raw"/>
+        <Param name="DeviceOutputQuantity" value="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0"/>
+      </ParamList>
+    </ParamListGroup>
+  </ParamDefinitionList>
+
+  <ParamDefinitionList name="DeviceOutputComponent::Bertec Force Plate::CoP">
+    <ParamListGroup name="">
+      <ParamList name="DeviceOutputComponent::423ae524b85d00039b056795338e15ad,3,1">
+        <Param name="DeviceOutputComponentName" value="Cx"/>
+        <Param name="DeviceTag" value="423ae524b85d00039b056795338e15ad"/>
+        <Param name="DeviceID" value="3"/>
+        <Param name="DeviceOutputID" value="3"/>
+        <Param name="DeviceOutputComponentID" value="1"/>
+      </ParamList>
+      <ParamList name="DeviceOutputComponent::423ae524b85d00039b056795338e15ad,3,2">
+        <Param name="DeviceOutputComponentName" value="Cy"/>
+        <Param name="DeviceTag" value="423ae524b85d00039b056795338e15ad"/>
+        <Param name="DeviceID" value="3"/>
+        <Param name="DeviceOutputID" value="3"/>
+        <Param name="DeviceOutputComponentID" value="2"/>
+      </ParamList>
+      <ParamList name="DeviceOutputComponent::423ae524b85d00039b056795338e15ad,3,3">
+        <Param name="DeviceOutputComponentName" value="Cz"/>
+        <Param name="DeviceTag" value="423ae524b85d00039b056795338e15ad"/>
+        <Param name="DeviceID" value="3"/>
+        <Param name="DeviceOutputID" value="3"/>
+        <Param name="DeviceOutputComponentID" value="3"/>
+      </ParamList>
+      <ParamList name="DeviceOutputComponent::920e12bb19b3f1a64f4aab83da47c52c,3,1">
+        <Param name="DeviceOutputComponentName" value="Cx"/>
+        <Param name="DeviceTag" value="920e12bb19b3f1a64f4aab83da47c52c"/>
+        <Param name="DeviceID" value="2"/>
+        <Param name="DeviceOutputID" value="3"/>
+        <Param name="DeviceOutputComponentID" value="1"/>
+      </ParamList>
+      <ParamList name="DeviceOutputComponent::920e12bb19b3f1a64f4aab83da47c52c,3,2">
+        <Param name="DeviceOutputComponentName" value="Cy"/>
+        <Param name="DeviceTag" value="920e12bb19b3f1a64f4aab83da47c52c"/>
+        <Param name="DeviceID" value="2"/>
+        <Param name="DeviceOutputID" value="3"/>
+        <Param name="DeviceOutputComponentID" value="2"/>
+      </ParamList>
+      <ParamList name="DeviceOutputComponent::920e12bb19b3f1a64f4aab83da47c52c,3,3">
+        <Param name="DeviceOutputComponentName" value="Cz"/>
+        <Param name="DeviceTag" value="920e12bb19b3f1a64f4aab83da47c52c"/>
+        <Param name="DeviceID" value="2"/>
+        <Param name="DeviceOutputID" value="3"/>
+        <Param name="DeviceOutputComponentID" value="3"/>
+      </ParamList>
+      <ParamList name="DeviceOutputComponent::c01b8b993a7a6916c1aff47ef81116aa,3,1">
+        <Param name="DeviceOutputComponentName" value="Cx"/>
+        <Param name="DeviceTag" value="c01b8b993a7a6916c1aff47ef81116aa"/>
+        <Param name="DeviceID" value="5"/>
+        <Param name="DeviceOutputID" value="3"/>
+        <Param name="DeviceOutputComponentID" value="1"/>
+      </ParamList>
+      <ParamList name="DeviceOutputComponent::c01b8b993a7a6916c1aff47ef81116aa,3,2">
+        <Param name="DeviceOutputComponentName" value="Cy"/>
+        <Param name="DeviceTag" value="c01b8b993a7a6916c1aff47ef81116aa"/>
+        <Param name="DeviceID" value="5"/>
+        <Param name="DeviceOutputID" value="3"/>
+        <Param name="DeviceOutputComponentID" value="2"/>
+      </ParamList>
+      <ParamList name="DeviceOutputComponent::c01b8b993a7a6916c1aff47ef81116aa,3,3">
+        <Param name="DeviceOutputComponentName" value="Cz"/>
+        <Param name="DeviceTag" value="c01b8b993a7a6916c1aff47ef81116aa"/>
+        <Param name="DeviceID" value="5"/>
+        <Param name="DeviceOutputID" value="3"/>
+        <Param name="DeviceOutputComponentID" value="3"/>
+      </ParamList>
+      <ParamList name="DeviceOutputComponent::d36f847e9bddec44d611949ce2210cbc,3,1">
+        <Param name="DeviceOutputComponentName" value="Cx"/>
+        <Param name="DeviceTag" value="d36f847e9bddec44d611949ce2210cbc"/>
+        <Param name="DeviceID" value="4"/>
+        <Param name="DeviceOutputID" value="3"/>
+        <Param name="DeviceOutputComponentID" value="1"/>
+      </ParamList>
+      <ParamList name="DeviceOutputComponent::d36f847e9bddec44d611949ce2210cbc,3,2">
+        <Param name="DeviceOutputComponentName" value="Cy"/>
+        <Param name="DeviceTag" value="d36f847e9bddec44d611949ce2210cbc"/>
+        <Param name="DeviceID" value="4"/>
+        <Param name="DeviceOutputID" value="3"/>
+        <Param name="DeviceOutputComponentID" value="2"/>
+      </ParamList>
+      <ParamList name="DeviceOutputComponent::d36f847e9bddec44d611949ce2210cbc,3,3">
+        <Param name="DeviceOutputComponentName" value="Cz"/>
+        <Param name="DeviceTag" value="d36f847e9bddec44d611949ce2210cbc"/>
+        <Param name="DeviceID" value="4"/>
+        <Param name="DeviceOutputID" value="3"/>
+        <Param name="DeviceOutputComponentID" value="3"/>
+      </ParamList>
+    </ParamListGroup>
+  </ParamDefinitionList>
+
+  <ParamDefinitionList name="DeviceOutputComponent::Bertec Force Plate::Force">
+    <ParamListGroup name="">
+      <ParamList name="DeviceOutputComponent::423ae524b85d00039b056795338e15ad,1,1">
+        <Param name="DeviceOutputComponentName" value="Fx"/>
+        <Param name="DeviceTag" value="423ae524b85d00039b056795338e15ad"/>
+        <Param name="DeviceID" value="3"/>
+        <Param name="DeviceOutputID" value="1"/>
+        <Param name="DeviceOutputComponentID" value="1"/>
+      </ParamList>
+      <ParamList name="DeviceOutputComponent::423ae524b85d00039b056795338e15ad,1,2">
+        <Param name="DeviceOutputComponentName" value="Fy"/>
+        <Param name="DeviceTag" value="423ae524b85d00039b056795338e15ad"/>
+        <Param name="DeviceID" value="3"/>
+        <Param name="DeviceOutputID" value="1"/>
+        <Param name="DeviceOutputComponentID" value="2"/>
+      </ParamList>
+      <ParamList name="DeviceOutputComponent::423ae524b85d00039b056795338e15ad,1,3">
+        <Param name="DeviceOutputComponentName" value="Fz"/>
+        <Param name="DeviceTag" value="423ae524b85d00039b056795338e15ad"/>
+        <Param name="DeviceID" value="3"/>
+        <Param name="DeviceOutputID" value="1"/>
+        <Param name="DeviceOutputComponentID" value="3"/>
+      </ParamList>
+      <ParamList name="DeviceOutputComponent::920e12bb19b3f1a64f4aab83da47c52c,1,1">
+        <Param name="DeviceOutputComponentName" value="Fx"/>
+        <Param name="DeviceTag" value="920e12bb19b3f1a64f4aab83da47c52c"/>
+        <Param name="DeviceID" value="2"/>
+        <Param name="DeviceOutputID" value="1"/>
+        <Param name="DeviceOutputComponentID" value="1"/>
+      </ParamList>
+      <ParamList name="DeviceOutputComponent::920e12bb19b3f1a64f4aab83da47c52c,1,2">
+        <Param name="DeviceOutputComponentName" value="Fy"/>
+        <Param name="DeviceTag" value="920e12bb19b3f1a64f4aab83da47c52c"/>
+        <Param name="DeviceID" value="2"/>
+        <Param name="DeviceOutputID" value="1"/>
+        <Param name="DeviceOutputComponentID" value="2"/>
+      </ParamList>
+      <ParamList name="DeviceOutputComponent::920e12bb19b3f1a64f4aab83da47c52c,1,3">
+        <Param name="DeviceOutputComponentName" value="Fz"/>
+        <Param name="DeviceTag" value="920e12bb19b3f1a64f4aab83da47c52c"/>
+        <Param name="DeviceID" value="2"/>
+        <Param name="DeviceOutputID" value="1"/>
+        <Param name="DeviceOutputComponentID" value="3"/>
+      </ParamList>
+      <ParamList name="DeviceOutputComponent::c01b8b993a7a6916c1aff47ef81116aa,1,1">
+        <Param name="DeviceOutputComponentName" value="Fx"/>
+        <Param name="DeviceTag" value="c01b8b993a7a6916c1aff47ef81116aa"/>
+        <Param name="DeviceID" value="5"/>
+        <Param name="DeviceOutputID" value="1"/>
+        <Param name="DeviceOutputComponentID" value="1"/>
+      </ParamList>
+      <ParamList name="DeviceOutputComponent::c01b8b993a7a6916c1aff47ef81116aa,1,2">
+        <Param name="DeviceOutputComponentName" value="Fy"/>
+        <Param name="DeviceTag" value="c01b8b993a7a6916c1aff47ef81116aa"/>
+        <Param name="DeviceID" value="5"/>
+        <Param name="DeviceOutputID" value="1"/>
+        <Param name="DeviceOutputComponentID" value="2"/>
+      </ParamList>
+      <ParamList name="DeviceOutputComponent::c01b8b993a7a6916c1aff47ef81116aa,1,3">
+        <Param name="DeviceOutputComponentName" value="Fz"/>
+        <Param name="DeviceTag" value="c01b8b993a7a6916c1aff47ef81116aa"/>
+        <Param name="DeviceID" value="5"/>
+        <Param name="DeviceOutputID" value="1"/>
+        <Param name="DeviceOutputComponentID" value="3"/>
+      </ParamList>
+      <ParamList name="DeviceOutputComponent::d36f847e9bddec44d611949ce2210cbc,1,1">
+        <Param name="DeviceOutputComponentName" value="Fx"/>
+        <Param name="DeviceTag" value="d36f847e9bddec44d611949ce2210cbc"/>
+        <Param name="DeviceID" value="4"/>
+        <Param name="DeviceOutputID" value="1"/>
+        <Param name="DeviceOutputComponentID" value="1"/>
+      </ParamList>
+      <ParamList name="DeviceOutputComponent::d36f847e9bddec44d611949ce2210cbc,1,2">
+        <Param name="DeviceOutputComponentName" value="Fy"/>
+        <Param name="DeviceTag" value="d36f847e9bddec44d611949ce2210cbc"/>
+        <Param name="DeviceID" value="4"/>
+        <Param name="DeviceOutputID" value="1"/>
+        <Param name="DeviceOutputComponentID" value="2"/>
+      </ParamList>
+      <ParamList name="DeviceOutputComponent::d36f847e9bddec44d611949ce2210cbc,1,3">
+        <Param name="DeviceOutputComponentName" value="Fz"/>
+        <Param name="DeviceTag" value="d36f847e9bddec44d611949ce2210cbc"/>
+        <Param name="DeviceID" value="4"/>
+        <Param name="DeviceOutputID" value="1"/>
+        <Param name="DeviceOutputComponentID" value="3"/>
+      </ParamList>
+    </ParamListGroup>
+  </ParamDefinitionList>
+
+  <ParamDefinitionList name="DeviceOutputComponent::Bertec Force Plate::Moment">
+    <ParamListGroup name="">
+      <ParamList name="DeviceOutputComponent::423ae524b85d00039b056795338e15ad,2,1">
+        <Param name="DeviceOutputComponentName" value="Mx"/>
+        <Param name="DeviceTag" value="423ae524b85d00039b056795338e15ad"/>
+        <Param name="DeviceID" value="3"/>
+        <Param name="DeviceOutputID" value="2"/>
+        <Param name="DeviceOutputComponentID" value="1"/>
+      </ParamList>
+      <ParamList name="DeviceOutputComponent::423ae524b85d00039b056795338e15ad,2,2">
+        <Param name="DeviceOutputComponentName" value="My"/>
+        <Param name="DeviceTag" value="423ae524b85d00039b056795338e15ad"/>
+        <Param name="DeviceID" value="3"/>
+        <Param name="DeviceOutputID" value="2"/>
+        <Param name="DeviceOutputComponentID" value="2"/>
+      </ParamList>
+      <ParamList name="DeviceOutputComponent::423ae524b85d00039b056795338e15ad,2,3">
+        <Param name="DeviceOutputComponentName" value="Mz"/>
+        <Param name="DeviceTag" value="423ae524b85d00039b056795338e15ad"/>
+        <Param name="DeviceID" value="3"/>
+        <Param name="DeviceOutputID" value="2"/>
+        <Param name="DeviceOutputComponentID" value="3"/>
+      </ParamList>
+      <ParamList name="DeviceOutputComponent::920e12bb19b3f1a64f4aab83da47c52c,2,1">
+        <Param name="DeviceOutputComponentName" value="Mx"/>
+        <Param name="DeviceTag" value="920e12bb19b3f1a64f4aab83da47c52c"/>
+        <Param name="DeviceID" value="2"/>
+        <Param name="DeviceOutputID" value="2"/>
+        <Param name="DeviceOutputComponentID" value="1"/>
+      </ParamList>
+      <ParamList name="DeviceOutputComponent::920e12bb19b3f1a64f4aab83da47c52c,2,2">
+        <Param name="DeviceOutputComponentName" value="My"/>
+        <Param name="DeviceTag" value="920e12bb19b3f1a64f4aab83da47c52c"/>
+        <Param name="DeviceID" value="2"/>
+        <Param name="DeviceOutputID" value="2"/>
+        <Param name="DeviceOutputComponentID" value="2"/>
+      </ParamList>
+      <ParamList name="DeviceOutputComponent::920e12bb19b3f1a64f4aab83da47c52c,2,3">
+        <Param name="DeviceOutputComponentName" value="Mz"/>
+        <Param name="DeviceTag" value="920e12bb19b3f1a64f4aab83da47c52c"/>
+        <Param name="DeviceID" value="2"/>
+        <Param name="DeviceOutputID" value="2"/>
+        <Param name="DeviceOutputComponentID" value="3"/>
+      </ParamList>
+      <ParamList name="DeviceOutputComponent::c01b8b993a7a6916c1aff47ef81116aa,2,1">
+        <Param name="DeviceOutputComponentName" value="Mx"/>
+        <Param name="DeviceTag" value="c01b8b993a7a6916c1aff47ef81116aa"/>
+        <Param name="DeviceID" value="5"/>
+        <Param name="DeviceOutputID" value="2"/>
+        <Param name="DeviceOutputComponentID" value="1"/>
+      </ParamList>
+      <ParamList name="DeviceOutputComponent::c01b8b993a7a6916c1aff47ef81116aa,2,2">
+        <Param name="DeviceOutputComponentName" value="My"/>
+        <Param name="DeviceTag" value="c01b8b993a7a6916c1aff47ef81116aa"/>
+        <Param name="DeviceID" value="5"/>
+        <Param name="DeviceOutputID" value="2"/>
+        <Param name="DeviceOutputComponentID" value="2"/>
+      </ParamList>
+      <ParamList name="DeviceOutputComponent::c01b8b993a7a6916c1aff47ef81116aa,2,3">
+        <Param name="DeviceOutputComponentName" value="Mz"/>
+        <Param name="DeviceTag" value="c01b8b993a7a6916c1aff47ef81116aa"/>
+        <Param name="DeviceID" value="5"/>
+        <Param name="DeviceOutputID" value="2"/>
+        <Param name="DeviceOutputComponentID" value="3"/>
+      </ParamList>
+      <ParamList name="DeviceOutputComponent::d36f847e9bddec44d611949ce2210cbc,2,1">
+        <Param name="DeviceOutputComponentName" value="Mx"/>
+        <Param name="DeviceTag" value="d36f847e9bddec44d611949ce2210cbc"/>
+        <Param name="DeviceID" value="4"/>
+        <Param name="DeviceOutputID" value="2"/>
+        <Param name="DeviceOutputComponentID" value="1"/>
+      </ParamList>
+      <ParamList name="DeviceOutputComponent::d36f847e9bddec44d611949ce2210cbc,2,2">
+        <Param name="DeviceOutputComponentName" value="My"/>
+        <Param name="DeviceTag" value="d36f847e9bddec44d611949ce2210cbc"/>
+        <Param name="DeviceID" value="4"/>
+        <Param name="DeviceOutputID" value="2"/>
+        <Param name="DeviceOutputComponentID" value="2"/>
+      </ParamList>
+      <ParamList name="DeviceOutputComponent::d36f847e9bddec44d611949ce2210cbc,2,3">
+        <Param name="DeviceOutputComponentName" value="Mz"/>
+        <Param name="DeviceTag" value="d36f847e9bddec44d611949ce2210cbc"/>
+        <Param name="DeviceID" value="4"/>
+        <Param name="DeviceOutputID" value="2"/>
+        <Param name="DeviceOutputComponentID" value="3"/>
+      </ParamList>
+    </ParamListGroup>
+  </ParamDefinitionList>
+
+  <ParamDefinitionList name="DeviceOutputComponent::Bertec Force Plate::Raw">
+    <ParamListGroup name="">
+      <ParamList name="DeviceOutputComponent::d36f847e9bddec44d611949ce2210cbc,4,1">
+        <Param name="DeviceOutputComponentName" value="Pin 17"/>
+        <Param name="DeviceTag" value="d36f847e9bddec44d611949ce2210cbc"/>
+        <Param name="DeviceID" value="4"/>
+        <Param name="DeviceOutputID" value="4"/>
+        <Param name="DeviceOutputComponentID" value="1"/>
+        <Param name="SourcePin" value="17"/>
+      </ParamList>
+      <ParamList name="DeviceOutputComponent::d36f847e9bddec44d611949ce2210cbc,4,2">
+        <Param name="DeviceOutputComponentName" value="Pin 18"/>
+        <Param name="DeviceTag" value="d36f847e9bddec44d611949ce2210cbc"/>
+        <Param name="DeviceID" value="4"/>
+        <Param name="DeviceOutputID" value="4"/>
+        <Param name="DeviceOutputComponentID" value="2"/>
+        <Param name="SourcePin" value="18"/>
+      </ParamList>
+      <ParamList name="DeviceOutputComponent::d36f847e9bddec44d611949ce2210cbc,4,3">
+        <Param name="DeviceOutputComponentName" value="Pin 19"/>
+        <Param name="DeviceTag" value="d36f847e9bddec44d611949ce2210cbc"/>
+        <Param name="DeviceID" value="4"/>
+        <Param name="DeviceOutputID" value="4"/>
+        <Param name="DeviceOutputComponentID" value="3"/>
+        <Param name="SourcePin" value="19"/>
+      </ParamList>
+      <ParamList name="DeviceOutputComponent::d36f847e9bddec44d611949ce2210cbc,4,4">
+        <Param name="DeviceOutputComponentName" value="Pin 20"/>
+        <Param name="DeviceTag" value="d36f847e9bddec44d611949ce2210cbc"/>
+        <Param name="DeviceID" value="4"/>
+        <Param name="DeviceOutputID" value="4"/>
+        <Param name="DeviceOutputComponentID" value="4"/>
+        <Param name="SourcePin" value="20"/>
+      </ParamList>
+      <ParamList name="DeviceOutputComponent::d36f847e9bddec44d611949ce2210cbc,4,5">
+        <Param name="DeviceOutputComponentName" value="Pin 21"/>
+        <Param name="DeviceTag" value="d36f847e9bddec44d611949ce2210cbc"/>
+        <Param name="DeviceID" value="4"/>
+        <Param name="DeviceOutputID" value="4"/>
+        <Param name="DeviceOutputComponentID" value="5"/>
+        <Param name="SourcePin" value="21"/>
+      </ParamList>
+      <ParamList name="DeviceOutputComponent::d36f847e9bddec44d611949ce2210cbc,4,6">
+        <Param name="DeviceOutputComponentName" value="Pin 22"/>
+        <Param name="DeviceTag" value="d36f847e9bddec44d611949ce2210cbc"/>
+        <Param name="DeviceID" value="4"/>
+        <Param name="DeviceOutputID" value="4"/>
+        <Param name="DeviceOutputComponentID" value="6"/>
+        <Param name="SourcePin" value="22"/>
+      </ParamList>
+    </ParamListGroup>
+  </ParamDefinitionList>
+
+  <ParamDefinitionList name="DeviceWhiteList">
+    <ParamListGroup name="">
+      <ParamList name="default">
+        <Param name="DeviceMap" value="[]"/>
+      </ParamList>
+    </ParamListGroup>
+  </ParamDefinitionList>
+
+  <ParamDefinitionList name="FlowParameters">
+    <ParamListGroup name="">
+      <ParamList name="GraphParams">
+        <Param name="General.FirstProcessingStage" value="1"/>
+        <Param name="General.OutputLevel" value="4"/>
+        <Param name="General.CalibrationLevel" value="0"/>
+        <Param name="General.NumberOfSubjects" value="1"/>
+        <Param name="General.FillGaps" value="false"/>
+        <Param name="General.ForwardPass" value="true"/>
+        <Param name="Input.FilterParameters" value="true"/>
+        <Param name="Input.EnableClock" value="false"/>
+        <Param name="Input.HaveViconSystem" value="false"/>
+        <Param name="Input.ClockFrequency" value="120"/>
+        <Param name="Input.ClockUseTimestamp" value="true"/>
+        <Param name="Input.Filename" value=""/>
+        <Param name="Input.Loop" value="false"/>
+        <Param name="Input.StartFrame" value="0"/>
+        <Param name="Input.EndFrame" value="4294967295"/>
+        <Param name="Input.RemoteAddress" value=""/>
+        <Param name="Input.BlockingStream" value="false"/>
+        <Param name="Input.XCPFilename" value=""/>
+        <Param name="Input.VSKFilenames" value=""/>
+        <Param name="Input.VSSFilenames" value=""/>
+        <Param name="Input.VSTFilenames" value=""/>
+        <Param name="Input.VSSCreateCalibrationTemplates" value="false"/>
+        <Param name="Input.VRAFolder" value=""/>
+        <Param name="Input.VideoInputDeviceURNS" value=""/>
+        <Param name="Input.DigitalDeviceURNS" value=""/>
+        <Param name="Input.DataTransferThreads" value="0"/>
+        <Param name="Input.CreateSubjectSettings" value="false"/>
+        <Param name="Input.X2DDeriveTickFromTimecode" value="true"/>
+        <Param name="Input.X2DIncludeUserIds" value="false"/>
+        <Param name="Input.X2DAddHardware" value="true"/>
+        <Param name="Input.HashNames" value="true"/>
+        <Param name="Input.CreateDefaultJointRanges" value="false"/>
+        <Param name="Input.TypeBlackList" value=""/>
+        <Param name="Input.TypeWhiteList" value=""/>
+        <Param name="Input.CameraBlackList" value=""/>
+        <Param name="Input.CameraWhiteList" value=""/>
+        <Param name="Input.ZeroFlowStoreOffset" value="false"/>
+        <Param name="Input.SubjectSettingsFilename" value=""/>
+        <Param name="Input.MCPStaticItemsFilename" value=""/>
+        <Param name="Input.VideoFilenames" value=""/>
+        <Param name="GlobalItems.Enabled" value="true"/>
+        <Param name="GlobalItems.TypeBlackList" value=""/>
+        <Param name="GlobalItems.TypeWhiteList" value=""/>
+        <Param name="PostGlobalItems.MCPFilename" value=""/>
+        <Param name="VideoCentroids.Enabled" value="false"/>
+        <Param name="CircleFitter.ThreadCount" value="0"/>
+        <Param name="CircleFitter.Enabled" value="true"/>
+        <Param name="CentroidSystem.RefitAlreadyFittedBlobs" value="false"/>
+        <Param name="CircleFitterType" value="FastSplit"/>
+        <Param name="CircularityTweak" value="0"/>
+        <Param name="UseNonGreedyBlobSplitting" value="false"/>
+        <Param name="GreedyScoreThreshold" value="0.65000000000000002"/>
+        <Param name="PreferCameraSpecificSettings" value="true"/>
+        <Param name="VideoCentroids.PreferCameraSpecificSettings" value="true"/>
+        <Param name="FastFitCircularityThreshold" value="0.25"/>
+        <Param name="VideoCentroids.FastFitCircularityThreshold" value="0.29999999999999999"/>
+        <Param name="MinimumFastSplitWholeBlobRadius" value="1.5"/>
+        <Param name="FastSplitPixelBudget" value="1000"/>
+        <Param name="OverrideCircularityThresholdSplit" value="0.44"/>
+        <Param name="CentroidSystem.AllowSinglePixelCentroids" value="false"/>
+        <Param name="VideoCentroids.SplitVideoFitters" value="true"/>
+        <Param name="VideoCentroids.SubsampleFactor" value="1"/>
+        <Param name="Reconstructor.Enabled" value="true"/>
+        <Param name="Reconstructor.ThreadCount" value="0"/>
+        <Param name="Reconstructor.3DPredictions" value="false"/>
+        <Param name="EnvironmentalDriftTolerance" value="1.5"/>
+        <Param name="MinCams" value="2"/>
+        <Param name="MinCamsWithPrediction" value="2"/>
+        <Param name="MinSeparation" value="14"/>
+        <Param name="MinCentroidRadius" value="0"/>
+        <Param name="MaxCentroidRadius" value="50"/>
+        <Param name="MinReconRadius" value="0"/>
+        <Param name="MaxReconRadius" value="1000"/>
+        <Param name="PredictionMatchScoreFactor" value="2"/>
+        <Param name="MinReconX" value="-100000"/>
+        <Param name="MinReconY" value="-100000"/>
+        <Param name="MinReconZ" value="-100000"/>
+        <Param name="MaxReconX" value="100000"/>
+        <Param name="MaxReconY" value="100000"/>
+        <Param name="MaxReconZ" value="100000"/>
+        <Param name="MatcherLowerMatchLimit" value="0"/>
+        <Param name="MatcherUpperMatchLimit" value="0"/>
+        <Param name="MatcherAlwaysSort" value="false"/>
+        <Param name="StartupError" value="150"/>
+        <Param name="PredictionError" value="150"/>
+        <Param name="CalculateMetrics" value="false"/>
+        <Param name="MetricsFilename" value=""/>
+        <Param name="RequireLabellingClusters" value="false"/>
+        <Param name="Labeller.RigidBodiesMinMatchCount" value="4"/>
+        <Param name="EntranceThreshold" value="0.84999999999999998"/>
+        <Param name="ExitThreshold" value="0.59999999999999998"/>
+        <Param name="Labeller.UseRobustBooting" value="false"/>
+        <Param name="BootingQualityHeuristic" value="0"/>
+        <Param name="BootingVersusTrackingHeuristic" value="0.5"/>
+        <Param name="TrackingQualityHeuristic" value="0"/>
+        <Param name="TrackingPriorImportance" value="200"/>
+        <Param name="BootingOutOfRangeBehaviour" value="FreezeAndUnlabelDownTheChain"/>
+        <Param name="TrackingOutOfRangeBehaviour" value="DoNothing"/>
+        <Param name="JointRangeThreshold" value="1"/>
+        <Param name="TrackingJointRangeThreshold" value="1"/>
+        <Param name="Labeller.EnforceRanges" value="false"/>
+        <Param name="Labeller.EnableTrackingLine" value="true"/>
+        <Param name="UseUnconstrainessScore" value="true"/>
+        <Param name="UnconstrainessEntranceThreshold" value="1"/>
+        <Param name="UnconstrainessExitThreshold" value="1.5"/>
+        <Param name="BootingKinematicFitThreshold" value="-50"/>
+        <Param name="LabelScore" value="1"/>
+        <Param name="MergerMarkerImportance" value="0.5"/>
+        <Param name="UnassignedReconProb" value="1e-10"/>
+        <Param name="UnassignedLabelProb" value="1.0000000000000001e-05"/>
+        <Param name="MarkerFitThreshold" value="55"/>
+        <Param name="TrackingKinematicFitThreshold" value="-50"/>
+        <Param name="LogMissingMarkerProbability" value="-18.4207"/>
+        <Param name="OutOfRangePenalty" value="5"/>
+        <Param name="UseFlowFitPool" value="false"/>
+        <Param name="IncrementalLabeller" value="false"/>
+        <Param name="AllowSubjectReboot" value="true"/>
+        <Param name="RigidBodyTranslationSlack" value="100"/>
+        <Param name="RigidBodyRotationSlack" value="0.5"/>
+        <Param name="Labeller.UnlabelledBootingLines" value="0"/>
+        <Param name="SmoothnessHeuristic" value="0"/>
+        <Param name="DataFidelityHeuristic" value="0"/>
+        <Param name="GapFiller.TransitionTime" value="0.10000000000000001"/>
+        <Param name="GapFiller.OverwriteRecons" value="false"/>
+        <Param name="GapFiller.UseRevisedTracker" value="true"/>
+        <Param name="PriorImportance" value="25"/>
+        <Param name="MeanPoseRatio" value="1"/>
+        <Param name="CameraHealing.Enable" value="false"/>
+        <Param name="CameraAutoHeal.Enabled" value="false"/>
+        <Param name="CameraAutoHeal.XCPFilename" value=""/>
+        <Param name="CameraAutoHeal.AutoHealMCPFilename" value=""/>
+        <Param name="CameraAutoHeal.AutoStartInGUIMode" value="false"/>
+        <Param name="CameraAutoHealBump.MinimumFrameCount" value="250"/>
+        <Param name="CameraAutoHealBump.ForceEnabledWithPassiveSystem" value="false"/>
+        <Param name="CameraAccelerometry.Enabled" value="false"/>
+        <Param name="GreyscaleCollector.Enabled" value="false"/>
+        <Param name="SystemHealth.Enable" value="false"/>
+        <Param name="SystemHealthReport.Enabled" value="false"/>
+        <Param name="CalibrationReport.Filename" value=""/>
+        <Param name="PerformanceMonitor.Enabled" value="false"/>
+        <Param name="SystemHealth.UseLabelledCentroidsOnly" value="false"/>
+        <Param name="SystemHealth.WindowSizeInSecondsCalibrationHealth" value="20"/>
+        <Param name="SystemHealth.StateThrottle" value="1"/>
+        <Param name="CameraTrackFromCluster.Enabled" value="false"/>
+        <Param name="CameraTrackFromCluster.CamerasToTrack" value=""/>
+        <Param name="CameraTrackFromCluster.SubjectsToTrack" value=""/>
+        <Param name="Reconstructor.MaxTrajLengthToDelete" value="0"/>
+        <Param name="Output.SubjectWorldPoseGenerator" value="false"/>
+        <Param name="Output.CentroidResidualSetGenerator" value="false"/>
+        <Param name="Drop.Enabled" value="false"/>
+        <Param name="N" value="2"/>
+        <Param name="StartOffset" value="0"/>
+        <Param name="DropFramesBeforeStart" value="false"/>
+        <Param name="DropFramesAfterX" value="-1"/>
+        <Param name="Clear" value="true"/>
+        <Param name="DropNth" value="false"/>
+        <Param name="Output.StateCacheName" value="DataStore"/>
+        <Param name="Output.StateCache" value="0"/>
+        <Param name="Output.StateCacheMB" value="0"/>
+        <Param name="Output.StateCacheSeconds" value="0"/>
+        <Param name="Output.StreamServer" value="false"/>
+        <Param name="Output.ServerThreadCount" value="1"/>
+        <Param name="Output.ServerPort" value="44602"/>
+        <Param name="Output.BlockWhenDisconnected" value="false"/>
+        <Param name="Output.C3DFilename" value=""/>
+        <Param name="Output.C3DTrajectoryPackingEnabled" value="true"/>
+        <Param name="Output.FSSFilename" value=""/>
+        <Param name="Output.X2DFilename" value=""/>
+        <Param name="Output.X2DWriteBehaviour" value="0"/>
+        <Param name="Output.StateCacheExcluding2D" value="0"/>
+        <Param name="Output.StateCacheExcludingVideo" value="0"/>
+        <Param name="Ouput.AddEventInserter" value="false"/>
+        <Param name="Output.TypeBlackList" value=""/>
+        <Param name="Output.TypeWhiteList" value=""/>
+        <Param name="Output.CameraBlackList" value=""/>
+        <Param name="Output.CameraWhiteList" value=""/>
+        <Param name="Output.EnableConsistencyChecker" value="false"/>
+        <Param name="Output.MCPTypeBlackList" value=""/>
+        <Param name="Output.MCPTypeWhiteList" value=""/>
+        <Param name="Output.CGStreamServerEnabled" value="false"/>
+        <Param name="Output.CGStreamServerPort" value="8002"/>
+        <Param name="Output.CGStreamServerSubjectTypeToStream" value="0"/>
+        <Param name="Output.CGStreamServerDataTypeToStream" value="0"/>
+        <Param name="General.CacheProgress" value="false"/>
+        <Param name="DebugStateCachePattern" value=""/>
+        <Param name="DebugStateCacheCapacity" value="1000"/>
+        <Param name="DebugFileWriterPattern" value=""/>
+        <Param name="DebugFileWriterStem" value=""/>
+        <Param name="DebugConsistencyCheckerPattern" value=""/>
+        <Param name="FitReconVolToTarget" value="false"/>
+      </ParamList>
+    </ParamListGroup>
+  </ParamDefinitionList>
+
+  <ParamDefinitionList name="MXCamera">
+    <ParamListGroup name="">
+      <ParamList name="2125445">
+        <Param name="Name" value=""/>
+        <Param name="Id" value="2125445"/>
+        <Param name="UserId" value="4"/>
+        <Param name="Enabled" value="true"/>
+        <Param name="EnableStrobe" value="true"/>
+        <Param name="Strobe" value="1"/>
+        <Param name="SensorMode" value="normal"/>
+        <Param name="Threshold" value="0.20000000000000001"/>
+        <Param name="Gain" value="1"/>
+        <Param name="Greyscale" value="0"/>
+        <Param name="EnableDSP" value="true"/>
+        <Param name="EnableWindowedFrameRates" value="true"/>
+        <Param name="CentroidTrackingEnable" value="false"/>
+        <Param name="CentroidTrackingMarkerVelocity" value="5"/>
+        <Param name="Connected" value="true"/>
+        <Param name="SyncMaster" value="false"/>
+        <Param name="Warning" value=""/>
+        <Param name="ContributingCentroids" value="true"/>
+        <Param name="ContributingGreyscale" value="true"/>
+        <Param name="ContributingTracks" value="false"/>
+        <Param name="Type" value="VeroV22"/>
+        <Param name="DisplayType" value="Vero v2.2"/>
+        <Param name="StrobeType" value="IR"/>
+        <Param name="StrobeTemperature" value="0"/>
+        <Param name="CameraPoETemperature" value="57"/>
+        <Param name="CameraDSPTemperature" value="57"/>
+        <Param name="CameraSensorTemperature" value="0"/>
+        <Param name="SensorWidth" value="2048"/>
+        <Param name="SensorHeight" value="1088"/>
+        <Param name="SensorWindowLeft" value="0"/>
+        <Param name="SensorWindowRight" value="2047"/>
+        <Param name="SensorWindowTop" value="0"/>
+        <Param name="SensorWindowBottom" value="1087"/>
+        <Param name="Revision" value="1"/>
+        <Param name="MACAddress" value="00:00:37:20:6e:85"/>
+        <Param name="SerialNumber" value="VE22-S-5257"/>
+        <Param name="HeadSerialNumber" value=""/>
+        <Param name="IPAddress" value="192.168.10.15"/>
+        <Param name="StreamDestinationAddress" value="Default"/>
+        <Param name="StreamDestinationAddressWarning" value=""/>
+        <Param name="FirmwareVersion" value="725"/>
+        <Param name="FirmwareComplete" value="true"/>
+        <Param name="BackFocus" value="false"/>
+        <Param name="MinRatio" value="0.5"/>
+        <Param name="MaxPixelsPerLineToCircleFit" value="50"/>
+        <Param name="VideoCalibrationReady" value="false"/>
+        <Param name="VideoNotCalibrationReady" value="true"/>
+        <Param name="ThresholdTableMode" value="2"/>
+        <Param name="EnableLEDs" value="true"/>
+        <Param name="EnableDisplays" value="true"/>
+        <Param name="EnableTap" value="true"/>
+        <Param name="EnableAccel" value="true"/>
+        <Param name="ResetCalibration" value="false"/>
+        <Param name="FocalLength" value="0.010615281918079079"/>
+        <Param name="RadialParam1" value="0.35691736885304121"/>
+        <Param name="RadialParam2" value="0.081336439352162296"/>
+        <Param name="Reboot" value="false"/>
+        <Param name="Bumped" value="false"/>
+        <Param name="BumpTolerance" value="0.0900000036"/>
+        <Param name="Orientation" value="Down"/>
+        <Param name="GreyscaleCalibration" value="false"/>
+        <Param name="VideoPreviewMode" value="0"/>
+        <Param name="VideoMode" value="false"/>
+        <Param name="FirmwareDisplayVersion"/>
+      </ParamList>
+      <ParamList name="2125451">
+        <Param name="Name" value=""/>
+        <Param name="Id" value="2125451"/>
+        <Param name="UserId" value="1"/>
+        <Param name="Enabled" value="true"/>
+        <Param name="EnableStrobe" value="true"/>
+        <Param name="Strobe" value="1"/>
+        <Param name="SensorMode" value="normal"/>
+        <Param name="Threshold" value="0.20000000000000001"/>
+        <Param name="Gain" value="1"/>
+        <Param name="Greyscale" value="0"/>
+        <Param name="EnableDSP" value="true"/>
+        <Param name="EnableWindowedFrameRates" value="true"/>
+        <Param name="CentroidTrackingEnable" value="false"/>
+        <Param name="CentroidTrackingMarkerVelocity" value="5"/>
+        <Param name="Connected" value="true"/>
+        <Param name="SyncMaster" value="false"/>
+        <Param name="Warning" value=""/>
+        <Param name="ContributingCentroids" value="true"/>
+        <Param name="ContributingGreyscale" value="true"/>
+        <Param name="ContributingTracks" value="false"/>
+        <Param name="Type" value="VeroV22"/>
+        <Param name="DisplayType" value="Vero v2.2"/>
+        <Param name="StrobeType" value="IR"/>
+        <Param name="StrobeTemperature" value="0"/>
+        <Param name="CameraPoETemperature" value="57"/>
+        <Param name="CameraDSPTemperature" value="57"/>
+        <Param name="CameraSensorTemperature" value="0"/>
+        <Param name="SensorWidth" value="2048"/>
+        <Param name="SensorHeight" value="1088"/>
+        <Param name="SensorWindowLeft" value="0"/>
+        <Param name="SensorWindowRight" value="2047"/>
+        <Param name="SensorWindowTop" value="0"/>
+        <Param name="SensorWindowBottom" value="1087"/>
+        <Param name="Revision" value="1"/>
+        <Param name="MACAddress" value="00:00:37:20:6e:8b"/>
+        <Param name="SerialNumber" value="VE22-S-5362"/>
+        <Param name="HeadSerialNumber" value=""/>
+        <Param name="IPAddress" value="192.168.10.11"/>
+        <Param name="StreamDestinationAddress" value="Default"/>
+        <Param name="StreamDestinationAddressWarning" value=""/>
+        <Param name="FirmwareVersion" value="725"/>
+        <Param name="FirmwareComplete" value="true"/>
+        <Param name="BackFocus" value="false"/>
+        <Param name="MinRatio" value="0.5"/>
+        <Param name="MaxPixelsPerLineToCircleFit" value="50"/>
+        <Param name="VideoCalibrationReady" value="false"/>
+        <Param name="VideoNotCalibrationReady" value="true"/>
+        <Param name="ThresholdTableMode" value="2"/>
+        <Param name="EnableLEDs" value="true"/>
+        <Param name="EnableDisplays" value="true"/>
+        <Param name="EnableTap" value="true"/>
+        <Param name="EnableAccel" value="true"/>
+        <Param name="ResetCalibration" value="false"/>
+        <Param name="FocalLength" value="0.009731776518709918"/>
+        <Param name="RadialParam1" value="0.40165117625823643"/>
+        <Param name="RadialParam2" value="-0.025598907235608582"/>
+        <Param name="Reboot" value="false"/>
+        <Param name="Bumped" value="false"/>
+        <Param name="BumpTolerance" value="0.0900000036"/>
+        <Param name="Orientation" value="Down"/>
+        <Param name="GreyscaleCalibration" value="false"/>
+        <Param name="VideoPreviewMode" value="0"/>
+        <Param name="VideoMode" value="false"/>
+        <Param name="FirmwareDisplayVersion"/>
+      </ParamList>
+      <ParamList name="2125477">
+        <Param name="Name" value=""/>
+        <Param name="Id" value="2125477"/>
+        <Param name="UserId" value="5"/>
+        <Param name="Enabled" value="true"/>
+        <Param name="EnableStrobe" value="true"/>
+        <Param name="Strobe" value="1"/>
+        <Param name="SensorMode" value="normal"/>
+        <Param name="Threshold" value="0.20000000000000001"/>
+        <Param name="Gain" value="1"/>
+        <Param name="Greyscale" value="0"/>
+        <Param name="EnableDSP" value="true"/>
+        <Param name="EnableWindowedFrameRates" value="true"/>
+        <Param name="CentroidTrackingEnable" value="false"/>
+        <Param name="CentroidTrackingMarkerVelocity" value="5"/>
+        <Param name="Connected" value="true"/>
+        <Param name="SyncMaster" value="false"/>
+        <Param name="Warning" value=""/>
+        <Param name="ContributingCentroids" value="true"/>
+        <Param name="ContributingGreyscale" value="true"/>
+        <Param name="ContributingTracks" value="false"/>
+        <Param name="Type" value="VeroV22"/>
+        <Param name="DisplayType" value="Vero v2.2"/>
+        <Param name="StrobeType" value="IR"/>
+        <Param name="StrobeTemperature" value="0"/>
+        <Param name="CameraPoETemperature" value="57"/>
+        <Param name="CameraDSPTemperature" value="57"/>
+        <Param name="CameraSensorTemperature" value="0"/>
+        <Param name="SensorWidth" value="2048"/>
+        <Param name="SensorHeight" value="1088"/>
+        <Param name="SensorWindowLeft" value="0"/>
+        <Param name="SensorWindowRight" value="2047"/>
+        <Param name="SensorWindowTop" value="0"/>
+        <Param name="SensorWindowBottom" value="1087"/>
+        <Param name="Revision" value="1"/>
+        <Param name="MACAddress" value="00:00:37:20:6e:a5"/>
+        <Param name="SerialNumber" value="VE22-S-5230"/>
+        <Param name="HeadSerialNumber" value=""/>
+        <Param name="IPAddress" value="192.168.10.13"/>
+        <Param name="StreamDestinationAddress" value="Default"/>
+        <Param name="StreamDestinationAddressWarning" value=""/>
+        <Param name="FirmwareVersion" value="725"/>
+        <Param name="FirmwareComplete" value="true"/>
+        <Param name="BackFocus" value="false"/>
+        <Param name="MinRatio" value="0.5"/>
+        <Param name="MaxPixelsPerLineToCircleFit" value="50"/>
+        <Param name="VideoCalibrationReady" value="false"/>
+        <Param name="VideoNotCalibrationReady" value="true"/>
+        <Param name="ThresholdTableMode" value="2"/>
+        <Param name="EnableLEDs" value="true"/>
+        <Param name="EnableDisplays" value="true"/>
+        <Param name="EnableTap" value="true"/>
+        <Param name="EnableAccel" value="true"/>
+        <Param name="ResetCalibration" value="false"/>
+        <Param name="FocalLength" value="0.011984435618258798"/>
+        <Param name="RadialParam1" value="0.33034414793366512"/>
+        <Param name="RadialParam2" value="0.026938111733320832"/>
+        <Param name="Reboot" value="false"/>
+        <Param name="Bumped" value="false"/>
+        <Param name="BumpTolerance" value="0.0900000036"/>
+        <Param name="Orientation" value="Down"/>
+        <Param name="GreyscaleCalibration" value="false"/>
+        <Param name="VideoPreviewMode" value="0"/>
+        <Param name="VideoMode" value="false"/>
+        <Param name="FirmwareDisplayVersion"/>
+      </ParamList>
+      <ParamList name="2125496">
+        <Param name="Name" value=""/>
+        <Param name="Id" value="2125496"/>
+        <Param name="UserId" value="6"/>
+        <Param name="Enabled" value="true"/>
+        <Param name="EnableStrobe" value="true"/>
+        <Param name="Strobe" value="1"/>
+        <Param name="SensorMode" value="normal"/>
+        <Param name="Threshold" value="0.20000000000000001"/>
+        <Param name="Gain" value="1"/>
+        <Param name="Greyscale" value="0"/>
+        <Param name="EnableDSP" value="true"/>
+        <Param name="EnableWindowedFrameRates" value="true"/>
+        <Param name="CentroidTrackingEnable" value="false"/>
+        <Param name="CentroidTrackingMarkerVelocity" value="5"/>
+        <Param name="Connected" value="true"/>
+        <Param name="SyncMaster" value="false"/>
+        <Param name="Warning" value=""/>
+        <Param name="ContributingCentroids" value="true"/>
+        <Param name="ContributingGreyscale" value="true"/>
+        <Param name="ContributingTracks" value="false"/>
+        <Param name="Type" value="VeroV22"/>
+        <Param name="DisplayType" value="Vero v2.2"/>
+        <Param name="StrobeType" value="IR"/>
+        <Param name="StrobeTemperature" value="0"/>
+        <Param name="CameraPoETemperature" value="63"/>
+        <Param name="CameraDSPTemperature" value="63"/>
+        <Param name="CameraSensorTemperature" value="0"/>
+        <Param name="SensorWidth" value="2048"/>
+        <Param name="SensorHeight" value="1088"/>
+        <Param name="SensorWindowLeft" value="0"/>
+        <Param name="SensorWindowRight" value="2047"/>
+        <Param name="SensorWindowTop" value="0"/>
+        <Param name="SensorWindowBottom" value="1087"/>
+        <Param name="Revision" value="1"/>
+        <Param name="MACAddress" value="00:00:37:20:6e:b8"/>
+        <Param name="SerialNumber" value="VE22-S-5226"/>
+        <Param name="HeadSerialNumber" value=""/>
+        <Param name="IPAddress" value="192.168.10.12"/>
+        <Param name="StreamDestinationAddress" value="Default"/>
+        <Param name="StreamDestinationAddressWarning" value=""/>
+        <Param name="FirmwareVersion" value="725"/>
+        <Param name="FirmwareComplete" value="true"/>
+        <Param name="BackFocus" value="false"/>
+        <Param name="MinRatio" value="0.5"/>
+        <Param name="MaxPixelsPerLineToCircleFit" value="50"/>
+        <Param name="VideoCalibrationReady" value="false"/>
+        <Param name="VideoNotCalibrationReady" value="true"/>
+        <Param name="ThresholdTableMode" value="2"/>
+        <Param name="EnableLEDs" value="true"/>
+        <Param name="EnableDisplays" value="true"/>
+        <Param name="EnableTap" value="true"/>
+        <Param name="EnableAccel" value="true"/>
+        <Param name="ResetCalibration" value="false"/>
+        <Param name="FocalLength" value="0.014415912022097823"/>
+        <Param name="RadialParam1" value="0.30229046772899437"/>
+        <Param name="RadialParam2" value="-0.085544585589068509"/>
+        <Param name="Reboot" value="false"/>
+        <Param name="Bumped" value="false"/>
+        <Param name="BumpTolerance" value="0.0900000036"/>
+        <Param name="Orientation" value="Right"/>
+        <Param name="GreyscaleCalibration" value="false"/>
+        <Param name="VideoPreviewMode" value="0"/>
+        <Param name="VideoMode" value="false"/>
+        <Param name="FirmwareDisplayVersion"/>
+      </ParamList>
+      <ParamList name="2125722">
+        <Param name="Name" value=""/>
+        <Param name="Id" value="2125722"/>
+        <Param name="UserId" value="2"/>
+        <Param name="Enabled" value="true"/>
+        <Param name="EnableStrobe" value="true"/>
+        <Param name="Strobe" value="1"/>
+        <Param name="SensorMode" value="normal"/>
+        <Param name="Threshold" value="0.20000000000000001"/>
+        <Param name="Gain" value="1"/>
+        <Param name="Greyscale" value="0"/>
+        <Param name="EnableDSP" value="true"/>
+        <Param name="EnableWindowedFrameRates" value="true"/>
+        <Param name="CentroidTrackingEnable" value="false"/>
+        <Param name="CentroidTrackingMarkerVelocity" value="5"/>
+        <Param name="Connected" value="true"/>
+        <Param name="SyncMaster" value="false"/>
+        <Param name="Warning" value=""/>
+        <Param name="ContributingCentroids" value="true"/>
+        <Param name="ContributingGreyscale" value="true"/>
+        <Param name="ContributingTracks" value="false"/>
+        <Param name="Type" value="VeroV22"/>
+        <Param name="DisplayType" value="Vero v2.2"/>
+        <Param name="StrobeType" value="IR"/>
+        <Param name="StrobeTemperature" value="0"/>
+        <Param name="CameraPoETemperature" value="58"/>
+        <Param name="CameraDSPTemperature" value="58"/>
+        <Param name="CameraSensorTemperature" value="0"/>
+        <Param name="SensorWidth" value="2048"/>
+        <Param name="SensorHeight" value="1088"/>
+        <Param name="SensorWindowLeft" value="0"/>
+        <Param name="SensorWindowRight" value="2047"/>
+        <Param name="SensorWindowTop" value="0"/>
+        <Param name="SensorWindowBottom" value="1087"/>
+        <Param name="Revision" value="1"/>
+        <Param name="MACAddress" value="00:00:37:20:6f:9a"/>
+        <Param name="SerialNumber" value="VE22-S-5273"/>
+        <Param name="HeadSerialNumber" value=""/>
+        <Param name="IPAddress" value="192.168.10.16"/>
+        <Param name="StreamDestinationAddress" value="Default"/>
+        <Param name="StreamDestinationAddressWarning" value=""/>
+        <Param name="FirmwareVersion" value="725"/>
+        <Param name="FirmwareComplete" value="true"/>
+        <Param name="BackFocus" value="false"/>
+        <Param name="MinRatio" value="0.5"/>
+        <Param name="MaxPixelsPerLineToCircleFit" value="50"/>
+        <Param name="VideoCalibrationReady" value="false"/>
+        <Param name="VideoNotCalibrationReady" value="true"/>
+        <Param name="ThresholdTableMode" value="2"/>
+        <Param name="EnableLEDs" value="true"/>
+        <Param name="EnableDisplays" value="true"/>
+        <Param name="EnableTap" value="true"/>
+        <Param name="EnableAccel" value="true"/>
+        <Param name="ResetCalibration" value="false"/>
+        <Param name="FocalLength" value="0.012011557504813718"/>
+        <Param name="RadialParam1" value="0.34723346586764936"/>
+        <Param name="RadialParam2" value="-0.062822280696627472"/>
+        <Param name="Reboot" value="false"/>
+        <Param name="Bumped" value="false"/>
+        <Param name="BumpTolerance" value="0.0900000036"/>
+        <Param name="Orientation" value="Down"/>
+        <Param name="GreyscaleCalibration" value="false"/>
+        <Param name="VideoPreviewMode" value="0"/>
+        <Param name="VideoMode" value="false"/>
+        <Param name="FirmwareDisplayVersion"/>
+      </ParamList>
+      <ParamList name="2125734">
+        <Param name="Name" value=""/>
+        <Param name="Id" value="2125734"/>
+        <Param name="UserId" value="3"/>
+        <Param name="Enabled" value="true"/>
+        <Param name="EnableStrobe" value="true"/>
+        <Param name="Strobe" value="1"/>
+        <Param name="SensorMode" value="normal"/>
+        <Param name="Threshold" value="0.20000000000000001"/>
+        <Param name="Gain" value="1"/>
+        <Param name="Greyscale" value="0"/>
+        <Param name="EnableDSP" value="true"/>
+        <Param name="EnableWindowedFrameRates" value="true"/>
+        <Param name="CentroidTrackingEnable" value="false"/>
+        <Param name="CentroidTrackingMarkerVelocity" value="5"/>
+        <Param name="Connected" value="true"/>
+        <Param name="SyncMaster" value="false"/>
+        <Param name="Warning" value=""/>
+        <Param name="ContributingCentroids" value="true"/>
+        <Param name="ContributingGreyscale" value="true"/>
+        <Param name="ContributingTracks" value="false"/>
+        <Param name="Type" value="VeroV22"/>
+        <Param name="DisplayType" value="Vero v2.2"/>
+        <Param name="StrobeType" value="IR"/>
+        <Param name="StrobeTemperature" value="0"/>
+        <Param name="CameraPoETemperature" value="57"/>
+        <Param name="CameraDSPTemperature" value="57"/>
+        <Param name="CameraSensorTemperature" value="0"/>
+        <Param name="SensorWidth" value="2048"/>
+        <Param name="SensorHeight" value="1088"/>
+        <Param name="SensorWindowLeft" value="0"/>
+        <Param name="SensorWindowRight" value="2047"/>
+        <Param name="SensorWindowTop" value="0"/>
+        <Param name="SensorWindowBottom" value="1087"/>
+        <Param name="Revision" value="1"/>
+        <Param name="MACAddress" value="00:00:37:20:6f:a6"/>
+        <Param name="SerialNumber" value="VE22-S-5266"/>
+        <Param name="HeadSerialNumber" value=""/>
+        <Param name="IPAddress" value="192.168.10.10"/>
+        <Param name="StreamDestinationAddress" value="Default"/>
+        <Param name="StreamDestinationAddressWarning" value=""/>
+        <Param name="FirmwareVersion" value="725"/>
+        <Param name="FirmwareComplete" value="true"/>
+        <Param name="BackFocus" value="false"/>
+        <Param name="MinRatio" value="0.5"/>
+        <Param name="MaxPixelsPerLineToCircleFit" value="50"/>
+        <Param name="VideoCalibrationReady" value="false"/>
+        <Param name="VideoNotCalibrationReady" value="true"/>
+        <Param name="ThresholdTableMode" value="2"/>
+        <Param name="EnableLEDs" value="true"/>
+        <Param name="EnableDisplays" value="true"/>
+        <Param name="EnableTap" value="true"/>
+        <Param name="EnableAccel" value="true"/>
+        <Param name="ResetCalibration" value="false"/>
+        <Param name="FocalLength" value="0.012686065408851461"/>
+        <Param name="RadialParam1" value="0.32011884666907886"/>
+        <Param name="RadialParam2" value="0.031740312178686912"/>
+        <Param name="Reboot" value="false"/>
+        <Param name="Bumped" value="false"/>
+        <Param name="BumpTolerance" value="0.0900000036"/>
+        <Param name="Orientation" value="Down"/>
+        <Param name="GreyscaleCalibration" value="false"/>
+        <Param name="VideoPreviewMode" value="0"/>
+        <Param name="VideoMode" value="false"/>
+        <Param name="FirmwareDisplayVersion"/>
+      </ParamList>
+      <ParamList name="2125849">
+        <Param name="Name" value=""/>
+        <Param name="Id" value="2125849"/>
+        <Param name="UserId" value="0"/>
+        <Param name="Enabled" value="true"/>
+        <Param name="EnableStrobe" value="true"/>
+        <Param name="Strobe" value="1"/>
+        <Param name="SensorMode" value="normal"/>
+        <Param name="Threshold" value="0.20000000000000001"/>
+        <Param name="Gain" value="1"/>
+        <Param name="Greyscale" value="0"/>
+        <Param name="EnableDSP" value="true"/>
+        <Param name="EnableWindowedFrameRates" value="true"/>
+        <Param name="CentroidTrackingEnable" value="false"/>
+        <Param name="CentroidTrackingMarkerVelocity" value="5"/>
+        <Param name="Connected" value="true"/>
+        <Param name="SyncMaster" value="false"/>
+        <Param name="Warning" value=""/>
+        <Param name="ContributingCentroids" value="true"/>
+        <Param name="ContributingGreyscale" value="true"/>
+        <Param name="ContributingTracks" value="false"/>
+        <Param name="Type" value="VeroV22"/>
+        <Param name="DisplayType" value="Vero v2.2"/>
+        <Param name="StrobeType" value="IR"/>
+        <Param name="StrobeTemperature" value="0"/>
+        <Param name="CameraPoETemperature" value="57"/>
+        <Param name="CameraDSPTemperature" value="57"/>
+        <Param name="CameraSensorTemperature" value="0"/>
+        <Param name="SensorWidth" value="2048"/>
+        <Param name="SensorHeight" value="1088"/>
+        <Param name="SensorWindowLeft" value="0"/>
+        <Param name="SensorWindowRight" value="2047"/>
+        <Param name="SensorWindowTop" value="0"/>
+        <Param name="SensorWindowBottom" value="1087"/>
+        <Param name="Revision" value="1"/>
+        <Param name="MACAddress" value="00:00:37:20:70:19"/>
+        <Param name="SerialNumber" value="VE22-S-5267"/>
+        <Param name="HeadSerialNumber" value=""/>
+        <Param name="IPAddress" value="192.168.10.14"/>
+        <Param name="StreamDestinationAddress" value="Default"/>
+        <Param name="StreamDestinationAddressWarning" value=""/>
+        <Param name="FirmwareVersion" value="725"/>
+        <Param name="FirmwareComplete" value="true"/>
+        <Param name="BackFocus" value="false"/>
+        <Param name="MinRatio" value="0.5"/>
+        <Param name="MaxPixelsPerLineToCircleFit" value="50"/>
+        <Param name="VideoCalibrationReady" value="false"/>
+        <Param name="VideoNotCalibrationReady" value="true"/>
+        <Param name="ThresholdTableMode" value="2"/>
+        <Param name="EnableLEDs" value="true"/>
+        <Param name="EnableDisplays" value="true"/>
+        <Param name="EnableTap" value="true"/>
+        <Param name="EnableAccel" value="true"/>
+        <Param name="ResetCalibration" value="false"/>
+        <Param name="FocalLength" value="0.010904941706233727"/>
+        <Param name="RadialParam1" value="0.38217624501629721"/>
+        <Param name="RadialParam2" value="-0.12272295856889012"/>
+        <Param name="Reboot" value="false"/>
+        <Param name="Bumped" value="false"/>
+        <Param name="BumpTolerance" value="0.0900000036"/>
+        <Param name="Orientation" value="Down"/>
+        <Param name="GreyscaleCalibration" value="false"/>
+        <Param name="VideoPreviewMode" value="0"/>
+        <Param name="VideoMode" value="false"/>
+        <Param name="FirmwareDisplayVersion"/>
+      </ParamList>
+    </ParamListGroup>
+  </ParamDefinitionList>
+
+  <ParamDefinitionList name="MXControlCard">
+    <ParamListGroup name="">
+      <ParamList name="37749602 0">
+        <Param name="AnalogueSourceID" value="2"/>
+        <Param name="CardType" value="Analog Card"/>
+        <Param name="DeviceID" value="37749602"/>
+        <Param name="SlotID" value="0"/>
+        <Param name="SamplingEnabled" value="true"/>
+        <Param name="RequestedSamplePeriod" value="135000"/>
+        <Param name="ActualSamplePeriod" value="135000"/>
+        <Param name="CardChannels" value="64"/>
+        <Param name="UsedChannels" value=""/>
+      </ParamList>
+    </ParamListGroup>
+  </ParamDefinitionList>
+
+  <ParamDefinitionList name="MXNet">
+    <ParamListGroup name="">
+      <ParamList name="37749602">
+        <Param name="Name" value=""/>
+        <Param name="Type" value="Lock Lab"/>
+        <Param name="Id" value="37749602"/>
+        <Param name="UserId" value="1"/>
+        <Param name="State" value="Ok"/>
+        <Param name="Enabled" value="true"/>
+        <Param name="SyncMaster" value="true"/>
+        <Param name="MaxGPO" value="8"/>
+        <Param name="GPOPin1"/>
+        <Param name="GPOPin2"/>
+        <Param name="GPOPin3"/>
+        <Param name="GPOPin4"/>
+        <Param name="GPOPin5"/>
+        <Param name="GPOPin6"/>
+        <Param name="GPOPin7"/>
+        <Param name="GPOPin8"/>
+        <Param name="MACAddress" value="00:00:37:40:03:62"/>
+        <Param name="SerialNumber" value="VL1164"/>
+        <Param name="IPAddress" value="192.168.10.18"/>
+        <Param name="FirmwareVersion" value="725"/>
+        <Param name="FirmwareComplete" value="true"/>
+        <Param name="Reboot" value="false"/>
+        <Param name="Selected" value="false"/>
+        <Param name="RadioEnabled" value="true"/>
+        <Param name="RadioMasterId" value="0"/>
+        <Param name="RadioPanId" value="0"/>
+        <Param name="RadioChannel" value="4294967295"/>
+        <Param name="RadioChannelConflict" value="4294967295"/>
+      </ParamList>
+    </ParamListGroup>
+  </ParamDefinitionList>
+
+  <ParamDefinitionList name="Mk6System">
+    <ParamListGroup name="">
+      <ParamList name="">
+        <Param name="FrameRate" value="600"/>
+        <Param name="ActualFrameRate" value="600"/>
+        <Param name="AcceptedFrameLatency" value="0"/>
+        <Param name="ManualFrameLatency" value="0"/>
+        <Param name="JitterReductionStrategy" value="0"/>
+        <Param name="MasterSelect" value="0"/>
+        <Param name="GenlockStandard" value="0"/>
+        <Param name="GenlockEnabled" value="false"/>
+        <Param name="DetectedGenlockStandard" value="0"/>
+        <Param name="AutoGenlock" value="false"/>
+        <Param name="GenlockStatus" value="None"/>
+        <Param name="GenlockOffset" value="0"/>
+        <Param name="VESAOffset" value="0"/>
+        <Param name="TimecodeSource" value="8"/>
+        <Param name="TimecodeDropFrame"/>
+        <Param name="TimecodeEnabled" value="false"/>
+        <Param name="TimecodeStandard" value="0"/>
+        <Param name="TimecodeStatus" value="None"/>
+        <Param name="Warning" value=""/>
+        <Param name="BufferSize" value="1024"/>
+        <Param name="BufferSizeRatio" value="0.5"/>
+        <Param name="Rewind" value="0"/>
+        <Param name="RebootAll" value="false"/>
+        <Param name="RealTimeBufferSize" value="20"/>
+        <Param name="MinimizeLatency" value="false"/>
+        <Param name="MinimizeJitter" value="false"/>
+      </ParamList>
+    </ParamListGroup>
+  </ParamDefinitionList>
+
+  <ParamDefinitionList name="OSCStream">
+    <ParamListGroup name="">
+      <ParamList name="">
+        <Param name="StreamEnabled" value="false"/>
+        <Param name="IPAddr" value="localhost"/>
+        <Param name="Port" value="7000"/>
+        <Param name="BufferSize" value="4096"/>
+        <Param name="SingleSubjectName" value="false"/>
+        <Param name="EnableSegments" value="false"/>
+        <Param name="EnableMarkers" value="false"/>
+        <Param name="EnableUnlabeledMarkers" value="false"/>
+        <Param name="EnableCentroids" value="false"/>
+        <Param name="EnableForcePlate" value="false"/>
+        <Param name="EnableDevices" value="false"/>
+        <Param name="EnableGazeVector" value="false"/>
+      </ParamList>
+    </ParamListGroup>
+  </ParamDefinitionList>
+
+  <ParamDefinitionList name="Vicon">
+    <ParamListGroup name="">
+      <ParamList name="">
+        <Param name="SOURCE" value="Nexus 2.15.0.145908h"/>
+      </ParamList>
+    </ParamListGroup>
+  </ParamDefinitionList>
+
+  <ParamDefinitionList name="ViconVideoColor">
+    <ParamListGroup name="">
+      <ParamList name="2125953">
+        <Param name="Name" value=""/>
+        <Param name="Id" value="2125953"/>
+        <Param name="UserId" value="1"/>
+        <Param name="Enabled" value="true"/>
+        <Param name="SensorMode" value="normal"/>
+        <Param name="Threshold" value="0.29999999999999999"/>
+        <Param name="ShutterDuration" value="1"/>
+        <Param name="VideoSaturation" value="0.800000012"/>
+        <Param name="VideoGainUnified" value="1"/>
+        <Param name="VideoGainRed" value="1"/>
+        <Param name="VideoGainGreen" value="1"/>
+        <Param name="VideoGainBlue" value="1"/>
+        <Param name="BrightnessOffsetUnified" value="0"/>
+        <Param name="BrightnessOffsetRed" value="0"/>
+        <Param name="BrightnessOffsetGreen" value="0"/>
+        <Param name="BrightnessOffsetBlue" value="0"/>
+        <Param name="CapturePath" value="P:/"/>
+        <Param name="CentroidTrackingEnable" value="false"/>
+        <Param name="CentroidTrackingMarkerVelocity" value="5"/>
+        <Param name="Connected" value="true"/>
+        <Param name="SyncMaster" value="false"/>
+        <Param name="Warning" value=""/>
+        <Param name="ContributingVideo" value="true"/>
+        <Param name="Type" value="Vue_VIDEO"/>
+        <Param name="DisplayType" value="Vue"/>
+        <Param name="CameraPoETemperature" value="54"/>
+        <Param name="CameraDSPTemperature" value="54"/>
+        <Param name="CameraSensorTemperature" value="0"/>
+        <Param name="SensorWidth" value="1920"/>
+        <Param name="SensorHeight" value="1080"/>
+        <Param name="SensorWindowLeft" value="0"/>
+        <Param name="SensorWindowRight" value="1919"/>
+        <Param name="SensorWindowTop" value="0"/>
+        <Param name="SensorWindowBottom" value="1079"/>
+        <Param name="Revision" value="1"/>
+        <Param name="MACAddress" value="00:00:37:20:70:81"/>
+        <Param name="SerialNumber" value="VU-0-0648"/>
+        <Param name="HeadSerialNumber" value=""/>
+        <Param name="IPAddress" value="192.168.10.17"/>
+        <Param name="StreamDestinationAddress" value="192.168.10.2"/>
+        <Param name="StreamDestinationAddressWarning" value=""/>
+        <Param name="SubSampleRatio" value="4"/>
+        <Param name="FirmwareVersion" value="725"/>
+        <Param name="FirmwareComplete" value="true"/>
+        <Param name="BackFocus" value="false"/>
+        <Param name="MinRatio" value="0.29999999999999999"/>
+        <Param name="MaxPixelsPerLineToCircleFit" value="50"/>
+        <Param name="VideoCalibrationReady" value="false"/>
+        <Param name="VideoNotCalibrationReady" value="true"/>
+        <Param name="ThresholdTableMode" value="2"/>
+        <Param name="EnableLEDs" value="true"/>
+        <Param name="EnableDisplays" value="true"/>
+        <Param name="EnableTap" value="true"/>
+        <Param name="EnableAccel" value="true"/>
+        <Param name="ResetCalibration" value="false"/>
+        <Param name="FocalLength" value="0.010559999999999998"/>
+        <Param name="RadialParam1" value="0"/>
+        <Param name="RadialParam2" value="0"/>
+        <Param name="Reboot" value="false"/>
+        <Param name="Bumped" value="false"/>
+        <Param name="BumpTolerance" value="0.0700000003"/>
+        <Param name="Orientation" value="Down"/>
+        <Param name="FirmwareDisplayVersion"/></ParamList>
+    </ParamListGroup>
+  </ParamDefinitionList>
+
+  <ParamDefinitionList name="Device::Imported Bertec Force Plate">
+    <ParamListGroup name="">
+      <ParamList name="Device::2">
+        <Param name="UserID" value="0"/>
+        <Param name="DeviceName" value="FT 19965"/>
+        <Param name="Connected" value="true"/>
+        <Param name="DelayCompensation" value="0"/>
+        <Param name="DeviceReady" value="true"/>
+        <Param name="SourceName" value="Source 1 (Force Plate)"/>
+        <Param name="Connectivity" value="Analogue"/>
+        <Param name="SourceID" value="1"/>
+        <Param name="SourceStatus" value="Ok"/>
+        <Param name="DeviceFamily" value="Imported Bertec Force Plate"/>
+        <Param name="DeviceTag" value="2"/>
+        <Param name="DeviceID" value="2"/>
+        <Param name="DeviceCategory" value="Force Plate"/>
+        <Param name="FramePeriod" value="675000"/>
+        <Param name="SamplePeriod" value="135000"/>
+        <Param name="Visible" value="true"/>
+        <Param name="AlwaysShow" value="true"/>
+        <Param name="SourceGain" value="10"/>
+        <Param name="SourcePin0" value="1"/>
+        <Param name="SourcePin1" value="2"/>
+        <Param name="SourcePin2" value="3"/>
+        <Param name="SourcePin3" value="4"/>
+        <Param name="SourcePin4" value="5"/>
+        <Param name="SourcePin5" value="6"/>
+        <Param name="CalibrationMatrix" value="0.01204 0.00818 0.00244 -1.16358 0.00452 1.17189 &#xA;0.01079 1.24706 0.02194 -0.66306 -0.01193 -0.66689 &#xA;-0.75642 0.00096 -0.78335 0.00273 -0.77458 -0.00744 &#xA;-7.2e-06 0.0055096 -0.0112037 -0.0029959 0.0111912 -0.0027644 &#xA;0.0125856 4.51e-05 -0.0065576 0.0051112 -0.0063929 -0.0052652 &#xA;9.83e-05 0.0083152 -9.86e-05 0.008688 -7.81e-05 0.0088607 &#xA;"/>
+        <Param name="ZeroLevel" value="1.57929 -1.86329 2.32281 -0.0321918 0.537779 4.51925 &#xA;"/>
+        <Param name="CorrectionFactor" value="1"/>
+        <Param name="ForceThreshold" value="0.00999999978"/>
+        <Param name="XLength" value="0.063500002"/>
+        <Param name="YLength" value="0.114300005"/>
+        <Param name="XPosition" value="-0.095250003"/>
+        <Param name="YPosition" value="0"/>
+        <Param name="ZPosition" value="-0.00300000003"/>
+        <Param name="XRotation" value="0"/>
+        <Param name="YRotation" value="3.1415925"/>
+        <Param name="ZRotation" value="0"/>
+        <Param name="XOrigin" value="0"/>
+        <Param name="YOrigin" value="0"/>
+        <Param name="ZOrigin" value="0"/>
+        <Param name="RawVisible" value="false"/>
+      </ParamList>
+      <ParamList name="Device::3">
+        <Param name="UserID" value="1"/>
+        <Param name="DeviceName" value="FT 19966"/>
+        <Param name="Connected" value="true"/>
+        <Param name="DelayCompensation" value="0"/>
+        <Param name="DeviceReady" value="true"/>
+        <Param name="SourceName" value="Source 2 (Force Plate)"/>
+        <Param name="Connectivity" value="Analogue"/>
+        <Param name="SourceID" value="2"/>
+        <Param name="SourceStatus" value="Ok"/>
+        <Param name="DeviceFamily" value="Imported Bertec Force Plate"/>
+        <Param name="DeviceTag" value="3"/>
+        <Param name="DeviceID" value="3"/>
+        <Param name="DeviceCategory" value="Force Plate"/>
+        <Param name="FramePeriod" value="675000"/>
+        <Param name="SamplePeriod" value="135000"/>
+        <Param name="Visible" value="true"/>
+        <Param name="AlwaysShow" value="true"/>
+        <Param name="SourceGain" value="10"/>
+        <Param name="SourcePin0" value="9"/>
+        <Param name="SourcePin1" value="10"/>
+        <Param name="SourcePin2" value="11"/>
+        <Param name="SourcePin3" value="12"/>
+        <Param name="SourcePin4" value="13"/>
+        <Param name="SourcePin5" value="14"/>
+        <Param name="CalibrationMatrix" value="-0.00969 -0.01413 -0.02387 1.12119 0.03265 -1.14735 &#xA;0.02419 -1.30137 -0.01267 0.65098 -0.00895 0.67149 &#xA;0.74569 0.02183 0.78403 0.00027 0.7754 0.02071 &#xA;0.0001179 -0.0057037 0.0111868 0.0029344 -0.0112643 0.0026303 &#xA;-0.0124581 -0.0003321 0.006598 -0.0048643 0.0062886 0.005228 &#xA;0.0002608 -0.0085933 0.0001854 -0.0085042 0.000276 -0.0089816 &#xA;"/>
+        <Param name="ZeroLevel" value="-1.41595 1.75377 -1.64698 -1.64389 -0.352543 -0.117746 &#xA;"/>
+        <Param name="CorrectionFactor" value="1"/>
+        <Param name="ForceThreshold" value="0.00999999978"/>
+        <Param name="XLength" value="0.063500002"/>
+        <Param name="YLength" value="0.114300005"/>
+        <Param name="XPosition" value="-0.031750001"/>
+        <Param name="YPosition" value="0"/>
+        <Param name="ZPosition" value="-0.00300000003"/>
+        <Param name="XRotation" value="0"/>
+        <Param name="YRotation" value="3.1415925"/>
+        <Param name="ZRotation" value="0"/>
+        <Param name="XOrigin" value="0"/>
+        <Param name="YOrigin" value="0"/>
+        <Param name="ZOrigin" value="0"/>
+        <Param name="RawVisible" value="false"/>
+      </ParamList>
+      <ParamList name="Device::4">
+        <Param name="UserID" value="2"/>
+        <Param name="DeviceName" value="FT 26943"/>
+        <Param name="Connected" value="true"/>
+        <Param name="DelayCompensation" value="0"/>
+        <Param name="DeviceReady" value="true"/>
+        <Param name="SourceName" value="Source 3 (Force Plate)"/>
+        <Param name="Connectivity" value="Analogue"/>
+        <Param name="SourceID" value="3"/>
+        <Param name="SourceStatus" value="Ok"/>
+        <Param name="DeviceFamily" value="Imported Bertec Force Plate"/>
+        <Param name="DeviceTag" value="4"/>
+        <Param name="DeviceID" value="4"/>
+        <Param name="DeviceCategory" value="Force Plate"/>
+        <Param name="FramePeriod" value="675000"/>
+        <Param name="SamplePeriod" value="135000"/>
+        <Param name="Visible" value="true"/>
+        <Param name="AlwaysShow" value="true"/>
+        <Param name="SourceGain" value="10"/>
+        <Param name="SourcePin0" value="17"/>
+        <Param name="SourcePin1" value="18"/>
+        <Param name="SourcePin2" value="19"/>
+        <Param name="SourcePin3" value="20"/>
+        <Param name="SourcePin4" value="21"/>
+        <Param name="SourcePin5" value="22"/>
+        <Param name="CalibrationMatrix" value="0.00151 0.01738 0.09307 1.19211 -0.04104 -1.14137 &#xA;-0.0818 -1.30935 0.04616 0.65499 0.01835 0.64732 &#xA;0.73064 -0.02818 0.77859 -0.05566 0.75555 -0.0434 &#xA;-0.0004581 -0.0057978 0.0113971 0.0020345 -0.0109964 0.0035549 &#xA;-0.0123714 0.0004727 0.0059931 -0.0057242 0.0065723 0.0046283 &#xA;-0.0006741 -0.0096824 -0.0006116 -0.0096227 -0.0003397 -0.009107 &#xA;"/>
+        <Param name="ZeroLevel" value="-0.690255 0.577896 -0.339366 0.836095 -0.0969428 -1.21128 &#xA;"/>
+        <Param name="CorrectionFactor" value="1"/>
+        <Param name="ForceThreshold" value="0.00999999978"/>
+        <Param name="XLength" value="0.063500002"/>
+        <Param name="YLength" value="0.114300005"/>
+        <Param name="XPosition" value="0.031750001"/>
+        <Param name="YPosition" value="0"/>
+        <Param name="ZPosition" value="-0.00300000003"/>
+        <Param name="XRotation" value="0"/>
+        <Param name="YRotation" value="3.1415925"/>
+        <Param name="ZRotation" value="0"/>
+        <Param name="XOrigin" value="0"/>
+        <Param name="YOrigin" value="0"/>
+        <Param name="ZOrigin" value="0"/>
+        <Param name="RawVisible" value="false"/>
+      </ParamList>
+      <ParamList name="Device::5">
+        <Param name="UserID" value="3"/>
+        <Param name="DeviceName" value="FT 26944"/>
+        <Param name="Connected" value="true"/>
+        <Param name="DelayCompensation" value="0"/>
+        <Param name="DeviceReady" value="true"/>
+        <Param name="SourceName" value="Source 4 (Force Plate)"/>
+        <Param name="Connectivity" value="Analogue"/>
+        <Param name="SourceID" value="4"/>
+        <Param name="SourceStatus" value="Ok"/>
+        <Param name="DeviceFamily" value="Imported Bertec Force Plate"/>
+        <Param name="DeviceTag" value="5"/>
+        <Param name="DeviceID" value="5"/>
+        <Param name="DeviceCategory" value="Force Plate"/>
+        <Param name="FramePeriod" value="675000"/>
+        <Param name="SamplePeriod" value="135000"/>
+        <Param name="Visible" value="true"/>
+        <Param name="AlwaysShow" value="true"/>
+        <Param name="SourceGain" value="10"/>
+        <Param name="SourcePin0" value="25"/>
+        <Param name="SourcePin1" value="26"/>
+        <Param name="SourcePin2" value="27"/>
+        <Param name="SourcePin3" value="28"/>
+        <Param name="SourcePin4" value="29"/>
+        <Param name="SourcePin5" value="30"/>
+        <Param name="CalibrationMatrix" value="0.0045 0.00769 0.09286 1.1042 -0.06402 -1.09955 &#xA;-0.01471 -1.31608 0.04775 0.6391 0.04323 0.63302 &#xA;0.74558 -0.04257 0.77058 -0.0145 0.77252 -0.02661 &#xA;-9.52e-05 -0.0059592 0.0114042 0.0025844 -0.0109968 0.0031877 &#xA;-0.0125962 0.0007283 0.0061495 -0.0050385 0.0067362 0.0046234 &#xA;-9.78e-05 -0.0093142 -0.0007482 -0.0091453 -0.0005206 -0.0089803 &#xA;"/>
+        <Param name="ZeroLevel" value="-0.819481 0.00131775 -0.230012 -1.33249 -0.372487 -0.413353 &#xA;"/>
+        <Param name="CorrectionFactor" value="1"/>
+        <Param name="ForceThreshold" value="0.00999999978"/>
+        <Param name="XLength" value="0.063500002"/>
+        <Param name="YLength" value="0.114300005"/>
+        <Param name="XPosition" value="0.095250003"/>
+        <Param name="YPosition" value="0"/>
+        <Param name="ZPosition" value="-0.00300000003"/>
+        <Param name="XRotation" value="0"/>
+        <Param name="YRotation" value="3.1415925"/>
+        <Param name="ZRotation" value="0"/>
+        <Param name="XOrigin" value="0"/>
+        <Param name="YOrigin" value="0"/>
+        <Param name="ZOrigin" value="0"/>
+        <Param name="RawVisible" value="false"/>
+      </ParamList>
+    </ParamListGroup>
+  </ParamDefinitionList>
+
+  <ParamDefinitionList name="DeviceOutput::Imported Bertec Force Plate::CoP">
+    <ParamListGroup name="">
+      <ParamList name="DeviceOutput::2,3">
+        <Param name="DeviceOutputName" value="CoP"/>
+        <Param name="DeviceOutputReady" value="true"/>
+        <Param name="Connected" value="true"/>
+        <Param name="Visible" value="true"/>
+        <Param name="DeviceTag" value="2"/>
+        <Param name="DeviceID" value="2"/>
+        <Param name="DeviceOutputID" value="3"/>
+        <Param name="DeviceOutputType" value="CoP"/>
+        <Param name="DeviceOutputQuantity" value="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0"/>
+      </ParamList>
+      <ParamList name="DeviceOutput::3,3">
+        <Param name="DeviceOutputName" value="CoP"/>
+        <Param name="DeviceOutputReady" value="true"/>
+        <Param name="Connected" value="true"/>
+        <Param name="Visible" value="true"/>
+        <Param name="DeviceTag" value="3"/>
+        <Param name="DeviceID" value="3"/>
+        <Param name="DeviceOutputID" value="3"/>
+        <Param name="DeviceOutputType" value="CoP"/>
+        <Param name="DeviceOutputQuantity" value="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0"/>
+      </ParamList>
+      <ParamList name="DeviceOutput::4,3">
+        <Param name="DeviceOutputName" value="CoP"/>
+        <Param name="DeviceOutputReady" value="true"/>
+        <Param name="Connected" value="true"/>
+        <Param name="Visible" value="true"/>
+        <Param name="DeviceTag" value="4"/>
+        <Param name="DeviceID" value="4"/>
+        <Param name="DeviceOutputID" value="3"/>
+        <Param name="DeviceOutputType" value="CoP"/>
+        <Param name="DeviceOutputQuantity" value="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0"/>
+      </ParamList>
+      <ParamList name="DeviceOutput::5,3">
+        <Param name="DeviceOutputName" value="CoP"/>
+        <Param name="DeviceOutputReady" value="true"/>
+        <Param name="Connected" value="true"/>
+        <Param name="Visible" value="true"/>
+        <Param name="DeviceTag" value="5"/>
+        <Param name="DeviceID" value="5"/>
+        <Param name="DeviceOutputID" value="3"/>
+        <Param name="DeviceOutputType" value="CoP"/>
+        <Param name="DeviceOutputQuantity" value="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0"/>
+      </ParamList>
+    </ParamListGroup>
+  </ParamDefinitionList>
+
+  <ParamDefinitionList name="DeviceOutput::Imported Bertec Force Plate::Force">
+    <ParamListGroup name="">
+      <ParamList name="DeviceOutput::2,1">
+        <Param name="DeviceOutputName" value="Force"/>
+        <Param name="DeviceOutputReady" value="true"/>
+        <Param name="Connected" value="true"/>
+        <Param name="Visible" value="true"/>
+        <Param name="DeviceTag" value="2"/>
+        <Param name="DeviceID" value="2"/>
+        <Param name="DeviceOutputID" value="1"/>
+        <Param name="DeviceOutputType" value="Force"/>
+        <Param name="DeviceOutputQuantity" value="0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0"/>
+      </ParamList>
+      <ParamList name="DeviceOutput::3,1">
+        <Param name="DeviceOutputName" value="Force"/>
+        <Param name="DeviceOutputReady" value="true"/>
+        <Param name="Connected" value="true"/>
+        <Param name="Visible" value="true"/>
+        <Param name="DeviceTag" value="3"/>
+        <Param name="DeviceID" value="3"/>
+        <Param name="DeviceOutputID" value="1"/>
+        <Param name="DeviceOutputType" value="Force"/>
+        <Param name="DeviceOutputQuantity" value="0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0"/>
+      </ParamList>
+      <ParamList name="DeviceOutput::4,1">
+        <Param name="DeviceOutputName" value="Force"/>
+        <Param name="DeviceOutputReady" value="true"/>
+        <Param name="Connected" value="true"/>
+        <Param name="Visible" value="true"/>
+        <Param name="DeviceTag" value="4"/>
+        <Param name="DeviceID" value="4"/>
+        <Param name="DeviceOutputID" value="1"/>
+        <Param name="DeviceOutputType" value="Force"/>
+        <Param name="DeviceOutputQuantity" value="0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0"/>
+      </ParamList>
+      <ParamList name="DeviceOutput::5,1">
+        <Param name="DeviceOutputName" value="Force"/>
+        <Param name="DeviceOutputReady" value="true"/>
+        <Param name="Connected" value="true"/>
+        <Param name="Visible" value="true"/>
+        <Param name="DeviceTag" value="5"/>
+        <Param name="DeviceID" value="5"/>
+        <Param name="DeviceOutputID" value="1"/>
+        <Param name="DeviceOutputType" value="Force"/>
+        <Param name="DeviceOutputQuantity" value="0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0"/>
+      </ParamList>
+    </ParamListGroup>
+  </ParamDefinitionList>
+
+  <ParamDefinitionList name="DeviceOutput::Imported Bertec Force Plate::Moment">
+    <ParamListGroup name="">
+      <ParamList name="DeviceOutput::2,2">
+        <Param name="DeviceOutputName" value="Moment"/>
+        <Param name="DeviceOutputReady" value="true"/>
+        <Param name="Connected" value="true"/>
+        <Param name="Visible" value="true"/>
+        <Param name="DeviceTag" value="2"/>
+        <Param name="DeviceID" value="2"/>
+        <Param name="DeviceOutputID" value="2"/>
+        <Param name="DeviceOutputType" value="Moment"/>
+        <Param name="DeviceOutputQuantity" value="0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0"/>
+      </ParamList>
+      <ParamList name="DeviceOutput::3,2">
+        <Param name="DeviceOutputName" value="Moment"/>
+        <Param name="DeviceOutputReady" value="true"/>
+        <Param name="Connected" value="true"/>
+        <Param name="Visible" value="true"/>
+        <Param name="DeviceTag" value="3"/>
+        <Param name="DeviceID" value="3"/>
+        <Param name="DeviceOutputID" value="2"/>
+        <Param name="DeviceOutputType" value="Moment"/>
+        <Param name="DeviceOutputQuantity" value="0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0"/>
+      </ParamList>
+      <ParamList name="DeviceOutput::4,2">
+        <Param name="DeviceOutputName" value="Moment"/>
+        <Param name="DeviceOutputReady" value="true"/>
+        <Param name="Connected" value="true"/>
+        <Param name="Visible" value="true"/>
+        <Param name="DeviceTag" value="4"/>
+        <Param name="DeviceID" value="4"/>
+        <Param name="DeviceOutputID" value="2"/>
+        <Param name="DeviceOutputType" value="Moment"/>
+        <Param name="DeviceOutputQuantity" value="0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0"/>
+      </ParamList>
+      <ParamList name="DeviceOutput::5,2">
+        <Param name="DeviceOutputName" value="Moment"/>
+        <Param name="DeviceOutputReady" value="true"/>
+        <Param name="Connected" value="true"/>
+        <Param name="Visible" value="true"/>
+        <Param name="DeviceTag" value="5"/>
+        <Param name="DeviceID" value="5"/>
+        <Param name="DeviceOutputID" value="2"/>
+        <Param name="DeviceOutputType" value="Moment"/>
+        <Param name="DeviceOutputQuantity" value="0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0"/>
+      </ParamList>
+    </ParamListGroup>
+  </ParamDefinitionList>
+
+  <ParamDefinitionList name="DeviceOutputComponent::Imported Bertec Force Plate::CoP">
+    <ParamListGroup name="">
+      <ParamList name="DeviceOutputComponent::2,3,1">
+        <Param name="DeviceOutputComponentName" value="Cx"/>
+        <Param name="DeviceTag" value="2"/>
+        <Param name="DeviceID" value="2"/>
+        <Param name="DeviceOutputID" value="3"/>
+        <Param name="DeviceOutputComponentID" value="1"/>
+      </ParamList>
+      <ParamList name="DeviceOutputComponent::2,3,2">
+        <Param name="DeviceOutputComponentName" value="Cy"/>
+        <Param name="DeviceTag" value="2"/>
+        <Param name="DeviceID" value="2"/>
+        <Param name="DeviceOutputID" value="3"/>
+        <Param name="DeviceOutputComponentID" value="2"/>
+      </ParamList>
+      <ParamList name="DeviceOutputComponent::2,3,3">
+        <Param name="DeviceOutputComponentName" value="Cz"/>
+        <Param name="DeviceTag" value="2"/>
+        <Param name="DeviceID" value="2"/>
+        <Param name="DeviceOutputID" value="3"/>
+        <Param name="DeviceOutputComponentID" value="3"/>
+      </ParamList>
+      <ParamList name="DeviceOutputComponent::3,3,1">
+        <Param name="DeviceOutputComponentName" value="Cx"/>
+        <Param name="DeviceTag" value="3"/>
+        <Param name="DeviceID" value="3"/>
+        <Param name="DeviceOutputID" value="3"/>
+        <Param name="DeviceOutputComponentID" value="1"/>
+      </ParamList>
+      <ParamList name="DeviceOutputComponent::3,3,2">
+        <Param name="DeviceOutputComponentName" value="Cy"/>
+        <Param name="DeviceTag" value="3"/>
+        <Param name="DeviceID" value="3"/>
+        <Param name="DeviceOutputID" value="3"/>
+        <Param name="DeviceOutputComponentID" value="2"/>
+      </ParamList>
+      <ParamList name="DeviceOutputComponent::3,3,3">
+        <Param name="DeviceOutputComponentName" value="Cz"/>
+        <Param name="DeviceTag" value="3"/>
+        <Param name="DeviceID" value="3"/>
+        <Param name="DeviceOutputID" value="3"/>
+        <Param name="DeviceOutputComponentID" value="3"/>
+      </ParamList>
+      <ParamList name="DeviceOutputComponent::4,3,1">
+        <Param name="DeviceOutputComponentName" value="Cx"/>
+        <Param name="DeviceTag" value="4"/>
+        <Param name="DeviceID" value="4"/>
+        <Param name="DeviceOutputID" value="3"/>
+        <Param name="DeviceOutputComponentID" value="1"/>
+      </ParamList>
+      <ParamList name="DeviceOutputComponent::4,3,2">
+        <Param name="DeviceOutputComponentName" value="Cy"/>
+        <Param name="DeviceTag" value="4"/>
+        <Param name="DeviceID" value="4"/>
+        <Param name="DeviceOutputID" value="3"/>
+        <Param name="DeviceOutputComponentID" value="2"/>
+      </ParamList>
+      <ParamList name="DeviceOutputComponent::4,3,3">
+        <Param name="DeviceOutputComponentName" value="Cz"/>
+        <Param name="DeviceTag" value="4"/>
+        <Param name="DeviceID" value="4"/>
+        <Param name="DeviceOutputID" value="3"/>
+        <Param name="DeviceOutputComponentID" value="3"/>
+      </ParamList>
+      <ParamList name="DeviceOutputComponent::5,3,1">
+        <Param name="DeviceOutputComponentName" value="Cx"/>
+        <Param name="DeviceTag" value="5"/>
+        <Param name="DeviceID" value="5"/>
+        <Param name="DeviceOutputID" value="3"/>
+        <Param name="DeviceOutputComponentID" value="1"/>
+      </ParamList>
+      <ParamList name="DeviceOutputComponent::5,3,2">
+        <Param name="DeviceOutputComponentName" value="Cy"/>
+        <Param name="DeviceTag" value="5"/>
+        <Param name="DeviceID" value="5"/>
+        <Param name="DeviceOutputID" value="3"/>
+        <Param name="DeviceOutputComponentID" value="2"/>
+      </ParamList>
+      <ParamList name="DeviceOutputComponent::5,3,3">
+        <Param name="DeviceOutputComponentName" value="Cz"/>
+        <Param name="DeviceTag" value="5"/>
+        <Param name="DeviceID" value="5"/>
+        <Param name="DeviceOutputID" value="3"/>
+        <Param name="DeviceOutputComponentID" value="3"/>
+      </ParamList>
+    </ParamListGroup>
+  </ParamDefinitionList>
+
+  <ParamDefinitionList name="DeviceOutputComponent::Imported Bertec Force Plate::Force">
+    <ParamListGroup name="">
+      <ParamList name="DeviceOutputComponent::2,1,1">
+        <Param name="DeviceOutputComponentName" value="Fx"/>
+        <Param name="DeviceTag" value="2"/>
+        <Param name="DeviceID" value="2"/>
+        <Param name="DeviceOutputID" value="1"/>
+        <Param name="DeviceOutputComponentID" value="1"/>
+      </ParamList>
+      <ParamList name="DeviceOutputComponent::2,1,2">
+        <Param name="DeviceOutputComponentName" value="Fy"/>
+        <Param name="DeviceTag" value="2"/>
+        <Param name="DeviceID" value="2"/>
+        <Param name="DeviceOutputID" value="1"/>
+        <Param name="DeviceOutputComponentID" value="2"/>
+      </ParamList>
+      <ParamList name="DeviceOutputComponent::2,1,3">
+        <Param name="DeviceOutputComponentName" value="Fz"/>
+        <Param name="DeviceTag" value="2"/>
+        <Param name="DeviceID" value="2"/>
+        <Param name="DeviceOutputID" value="1"/>
+        <Param name="DeviceOutputComponentID" value="3"/>
+      </ParamList>
+      <ParamList name="DeviceOutputComponent::3,1,1">
+        <Param name="DeviceOutputComponentName" value="Fx"/>
+        <Param name="DeviceTag" value="3"/>
+        <Param name="DeviceID" value="3"/>
+        <Param name="DeviceOutputID" value="1"/>
+        <Param name="DeviceOutputComponentID" value="1"/>
+      </ParamList>
+      <ParamList name="DeviceOutputComponent::3,1,2">
+        <Param name="DeviceOutputComponentName" value="Fy"/>
+        <Param name="DeviceTag" value="3"/>
+        <Param name="DeviceID" value="3"/>
+        <Param name="DeviceOutputID" value="1"/>
+        <Param name="DeviceOutputComponentID" value="2"/>
+      </ParamList>
+      <ParamList name="DeviceOutputComponent::3,1,3">
+        <Param name="DeviceOutputComponentName" value="Fz"/>
+        <Param name="DeviceTag" value="3"/>
+        <Param name="DeviceID" value="3"/>
+        <Param name="DeviceOutputID" value="1"/>
+        <Param name="DeviceOutputComponentID" value="3"/>
+      </ParamList>
+      <ParamList name="DeviceOutputComponent::4,1,1">
+        <Param name="DeviceOutputComponentName" value="Fx"/>
+        <Param name="DeviceTag" value="4"/>
+        <Param name="DeviceID" value="4"/>
+        <Param name="DeviceOutputID" value="1"/>
+        <Param name="DeviceOutputComponentID" value="1"/>
+      </ParamList>
+      <ParamList name="DeviceOutputComponent::4,1,2">
+        <Param name="DeviceOutputComponentName" value="Fy"/>
+        <Param name="DeviceTag" value="4"/>
+        <Param name="DeviceID" value="4"/>
+        <Param name="DeviceOutputID" value="1"/>
+        <Param name="DeviceOutputComponentID" value="2"/>
+      </ParamList>
+      <ParamList name="DeviceOutputComponent::4,1,3">
+        <Param name="DeviceOutputComponentName" value="Fz"/>
+        <Param name="DeviceTag" value="4"/>
+        <Param name="DeviceID" value="4"/>
+        <Param name="DeviceOutputID" value="1"/>
+        <Param name="DeviceOutputComponentID" value="3"/>
+      </ParamList>
+      <ParamList name="DeviceOutputComponent::5,1,1">
+        <Param name="DeviceOutputComponentName" value="Fx"/>
+        <Param name="DeviceTag" value="5"/>
+        <Param name="DeviceID" value="5"/>
+        <Param name="DeviceOutputID" value="1"/>
+        <Param name="DeviceOutputComponentID" value="1"/>
+      </ParamList>
+      <ParamList name="DeviceOutputComponent::5,1,2">
+        <Param name="DeviceOutputComponentName" value="Fy"/>
+        <Param name="DeviceTag" value="5"/>
+        <Param name="DeviceID" value="5"/>
+        <Param name="DeviceOutputID" value="1"/>
+        <Param name="DeviceOutputComponentID" value="2"/>
+      </ParamList>
+      <ParamList name="DeviceOutputComponent::5,1,3">
+        <Param name="DeviceOutputComponentName" value="Fz"/>
+        <Param name="DeviceTag" value="5"/>
+        <Param name="DeviceID" value="5"/>
+        <Param name="DeviceOutputID" value="1"/>
+        <Param name="DeviceOutputComponentID" value="3"/>
+      </ParamList>
+    </ParamListGroup>
+  </ParamDefinitionList>
+
+  <ParamDefinitionList name="DeviceOutputComponent::Imported Bertec Force Plate::Moment">
+    <ParamListGroup name="">
+      <ParamList name="DeviceOutputComponent::2,2,1">
+        <Param name="DeviceOutputComponentName" value="Mx"/>
+        <Param name="DeviceTag" value="2"/>
+        <Param name="DeviceID" value="2"/>
+        <Param name="DeviceOutputID" value="2"/>
+        <Param name="DeviceOutputComponentID" value="1"/>
+      </ParamList>
+      <ParamList name="DeviceOutputComponent::2,2,2">
+        <Param name="DeviceOutputComponentName" value="My"/>
+        <Param name="DeviceTag" value="2"/>
+        <Param name="DeviceID" value="2"/>
+        <Param name="DeviceOutputID" value="2"/>
+        <Param name="DeviceOutputComponentID" value="2"/>
+      </ParamList>
+      <ParamList name="DeviceOutputComponent::2,2,3">
+        <Param name="DeviceOutputComponentName" value="Mz"/>
+        <Param name="DeviceTag" value="2"/>
+        <Param name="DeviceID" value="2"/>
+        <Param name="DeviceOutputID" value="2"/>
+        <Param name="DeviceOutputComponentID" value="3"/>
+      </ParamList>
+      <ParamList name="DeviceOutputComponent::3,2,1">
+        <Param name="DeviceOutputComponentName" value="Mx"/>
+        <Param name="DeviceTag" value="3"/>
+        <Param name="DeviceID" value="3"/>
+        <Param name="DeviceOutputID" value="2"/>
+        <Param name="DeviceOutputComponentID" value="1"/>
+      </ParamList>
+      <ParamList name="DeviceOutputComponent::3,2,2">
+        <Param name="DeviceOutputComponentName" value="My"/>
+        <Param name="DeviceTag" value="3"/>
+        <Param name="DeviceID" value="3"/>
+        <Param name="DeviceOutputID" value="2"/>
+        <Param name="DeviceOutputComponentID" value="2"/>
+      </ParamList>
+      <ParamList name="DeviceOutputComponent::3,2,3">
+        <Param name="DeviceOutputComponentName" value="Mz"/>
+        <Param name="DeviceTag" value="3"/>
+        <Param name="DeviceID" value="3"/>
+        <Param name="DeviceOutputID" value="2"/>
+        <Param name="DeviceOutputComponentID" value="3"/>
+      </ParamList>
+      <ParamList name="DeviceOutputComponent::4,2,1">
+        <Param name="DeviceOutputComponentName" value="Mx"/>
+        <Param name="DeviceTag" value="4"/>
+        <Param name="DeviceID" value="4"/>
+        <Param name="DeviceOutputID" value="2"/>
+        <Param name="DeviceOutputComponentID" value="1"/>
+      </ParamList>
+      <ParamList name="DeviceOutputComponent::4,2,2">
+        <Param name="DeviceOutputComponentName" value="My"/>
+        <Param name="DeviceTag" value="4"/>
+        <Param name="DeviceID" value="4"/>
+        <Param name="DeviceOutputID" value="2"/>
+        <Param name="DeviceOutputComponentID" value="2"/>
+      </ParamList>
+      <ParamList name="DeviceOutputComponent::4,2,3">
+        <Param name="DeviceOutputComponentName" value="Mz"/>
+        <Param name="DeviceTag" value="4"/>
+        <Param name="DeviceID" value="4"/>
+        <Param name="DeviceOutputID" value="2"/>
+        <Param name="DeviceOutputComponentID" value="3"/>
+      </ParamList>
+      <ParamList name="DeviceOutputComponent::5,2,1">
+        <Param name="DeviceOutputComponentName" value="Mx"/>
+        <Param name="DeviceTag" value="5"/>
+        <Param name="DeviceID" value="5"/>
+        <Param name="DeviceOutputID" value="2"/>
+        <Param name="DeviceOutputComponentID" value="1"/>
+      </ParamList>
+      <ParamList name="DeviceOutputComponent::5,2,2">
+        <Param name="DeviceOutputComponentName" value="My"/>
+        <Param name="DeviceTag" value="5"/>
+        <Param name="DeviceID" value="5"/>
+        <Param name="DeviceOutputID" value="2"/>
+        <Param name="DeviceOutputComponentID" value="2"/>
+      </ParamList>
+      <ParamList name="DeviceOutputComponent::5,2,3">
+        <Param name="DeviceOutputComponentName" value="Mz"/>
+        <Param name="DeviceTag" value="5"/>
+        <Param name="DeviceID" value="5"/>
+        <Param name="DeviceOutputID" value="2"/>
+        <Param name="DeviceOutputComponentID" value="3"/>
+      </ParamList>
+    </ParamListGroup>
+  </ParamDefinitionList>
+
+
+</ParamStore>
