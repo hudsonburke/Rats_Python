@@ -2,12 +2,16 @@ import ezc3d
 import xarray as xr
 from pydantic import BaseModel, model_validator, ConfigDict
 from enum import Enum
-from abc import ABC, abstractmethod # Added ABC, abstractmethod
-from typing import Any, Annotated
+from abc import ABC, abstractmethod 
+from typing import Any, Annotated, Type, TypeVar 
 import numpy as np
 from loguru import logger
 import polars as pl
 import patito as pt
+
+# Define a TypeVar that is bound by the Trial class itself
+# This means _T can be Trial or any subclass of Trial.
+_T = TypeVar("_T", bound="Trial")
 
 class Event(BaseModel): 
     """
@@ -16,33 +20,32 @@ class Event(BaseModel):
     """
     label: str
     context: str
-    _frame: int | None = None
-    _time: float | None = None
+    frame: int | None = None
+    time: float | None = None
     description: str | None = None
     
     @model_validator(mode='after')
     def validate_frames_or_times(self):
-        if self._frame is None and self._time is None:
+        if self.frame is None and self.time is None:
             raise ValueError("Either frames or times must be provided.")
-        if self._frame is not None and self._time is not None:
+        if self.frame is not None and self.time is not None:
             raise ValueError("Only one of frames or times should be provided.")
         return self
 
     def get_frame(self, point_rate: float | None) -> int | None:
-        if self._frame is not None:
-            return self._frame
-        if self._time is not None and point_rate is not None and point_rate > 0:
-            return int(self._time * point_rate)
+        if self.frame is not None:
+            return self.frame
+        if self.time is not None and point_rate is not None and point_rate > 0:
+            return int(self.time * point_rate)
         return None
 
     def get_time(self, point_rate: float | None) -> float | None:
-        if self._time is not None:
-            return self._time
-        if self._frame is not None and point_rate is not None and point_rate > 0:
-            return self._frame / point_rate
+        if self.time is not None:
+            return self.time
+        if self.frame is not None and point_rate is not None and point_rate > 0:
+            return self.frame / point_rate
         return None
     
-
 class ImportMethod(str, Enum):
     C3D = "C3D"
     VICON_NEXUS = "Vicon Nexus"
@@ -74,7 +77,6 @@ class TimeSeriesGroup(BaseModel):
         if frame < self.first_frame or frame > self.last_frame:
             raise ValueError("Frame out of bounds")
         return (frame - 1) / self.rate
-
 
 class TimeSeries(BaseModel, ABC):
     model_config = ConfigDict(arbitrary_types_allowed=True)
@@ -162,10 +164,11 @@ class Trial(BaseModel):
         self.events = sorted(self.events, key=lambda e: (e.get_frame(self.points.rate), e.get_time(self.points.rate)))
         return self
         
-    def to_trc(self, filepath: str):
+    def to_trc(self, filepath: str, rotation = [[1, 0, 0], [0, 0, 1], [0, -1, 0]]):
         """
         Export the trial data to TRC file format.
         """
+        
         raise NotImplementedError("Export to TRC file format is not implemented yet.")
 
     def to_fp(self, filepath: str):
@@ -185,11 +188,11 @@ class Trial(BaseModel):
         return param.get('value', default)
 
     @classmethod
-    def from_c3d(cls, 
+    def from_c3d(cls: Type[_T], # MODIFIED: cls is of type Type[_T]
                  c3d_object: ezc3d.c3d, 
                  trial_name: str = "", 
                  session_name: str = "", 
-                 classification: str = "") -> 'Trial':
+                 classification: str = "") -> _T: # MODIFIED: Returns an instance of _T
         """
         Create a Trial instance from a C3D object.
         """
@@ -218,7 +221,7 @@ class Trial(BaseModel):
         events = []
         if 'EVENT' in c3d_parameters:
             event_params : dict = c3d_parameters['EVENT']
-            num_events = event_params.get('USED', {}).get('value', 0)
+            num_events = event_params.get('USED', {}).get('value', [0])[0]
             event_contexts = event_params.get('CONTEXTS', {}).get('value', [])
             event_labels = event_params.get('LABELS', {}).get('value', [])
             event_descriptions = event_params.get('DESCRIPTIONS', {}).get('value', [])
@@ -228,7 +231,7 @@ class Trial(BaseModel):
                 events.append(Event(
                     label=event_labels[i],
                     context=event_contexts[i],
-                    _time=event_times[0][i]*60 + event_times[1][i], # Convert from (min, sec) to sec
+                    time=event_times[0][i]*60 + event_times[1][i], # Convert from (min, sec) to sec
                     description=event_descriptions[i],
                 ))
                 
@@ -254,9 +257,9 @@ class Trial(BaseModel):
         point_descriptions = cls._get_c3d_param(c3d_object, 'POINT', 'DESCRIPTIONS', default=[])
         point_scale = cls._get_c3d_param(c3d_object, 'POINT', 'SCALE', default=1)
         
-        if point_scale != 1:
-            logger.warning(f"Point scale {point_scale} is not 1. Scaling point data accordingly.")
-            point_data = point_data * point_scale
+        # if point_scale != 1: # TODO: Figure out what to do with this
+        #     logger.warning(f"Point scale {point_scale} is not 1. Scaling point data accordingly.")
+        #     point_data = point_data * point_scale
         for i, label in enumerate(point_labels):
             trajectories[label] = Marker(
                 data=pl.DataFrame({
@@ -264,6 +267,7 @@ class Trial(BaseModel):
                 'y': point_data[1, i, :],
                 'z': point_data[2, i, :],
                 'residual': residuals[0, i, :] if residuals is not None else None,
+                'exists': point_data[3, i, :] == 1
                 }),
                 description=point_descriptions[i] or None
             )
@@ -281,7 +285,7 @@ class Trial(BaseModel):
         for i, label in enumerate(analog_labels):
             channels[label] = Analog(
                 data=pl.DataFrame({
-                    'value': analog_data[0, i, :]
+                    'values': analog_data[0, i, :]
                 }),
                 units=analog_units[i] or 'unknown',
                 description=analog_descriptions[i] or None
@@ -311,7 +315,7 @@ class Trial(BaseModel):
         )
            
     @classmethod
-    def from_c3d_file(cls, file_path: str) -> 'Trial':
+    def from_c3d_file(cls: Type[_T], file_path: str) -> _T: # MODIFIED: Returns an instance of _T
         """
         Create a Trial instance from a C3D file.
         """
@@ -322,7 +326,7 @@ class Trial(BaseModel):
         split_path = file_path.split('/')
         trial_name = split_path[-1].replace('.c3d', '')
         session_name = split_path[-2] if len(split_path) > 1 else ""
-        classification = split_path[-3] if len(split_path) > 2 else ""
+        classification = split_path[-4] if len(split_path) > 3 else ""
         return cls.from_c3d(c3d_object, trial_name=trial_name, session_name=session_name, classification=classification)
 
     @classmethod
@@ -391,7 +395,7 @@ class Trial(BaseModel):
                         trial_events.append(Event(
                             label=label,
                             context=context,
-                            _frame=frame
+                            frame=frame
                         ))
                 except Exception as e:
                     logger.debug(f"No events found for {context} {label}: {e}")

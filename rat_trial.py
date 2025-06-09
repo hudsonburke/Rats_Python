@@ -10,8 +10,6 @@ class RatTrialType(str, Enum):
     WALK = "Walk"
 
 class RatTrial(Trial):
-    
-    
     required_markers: list[str] = [
         "TAIL", "SPL6", "LASI", "RASI", # Torso
         "LHIP", "LKNE", "LANK", "LTOE", # Left leg
@@ -21,14 +19,13 @@ class RatTrial(Trial):
     required_parameters: list[str] = [
         "Mass",
         "Length",
-        "RightFemurLength",
-        "RightTibiaLength",
-        "RightFootLength",
-        "LeftFemurLength",
-        "LeftTibiaLength",
-        "LeftFootLength",
+        "RFemurLength",
+        "RTibiaLength",
+        "RFootLength",
+        "LFemurLength",
+        "LTibiaLength",
+        "LFootLength",
     ]
-
     base_femur_length: float = float(np.linalg.norm([-0.0035000000000000001, -0.031199999999999999, -0.0050000000000000001]) * 1000)
     base_tibia_length: float = float(np.linalg.norm([0.0016000000000000001, 0.039, -0.0037000000000000002]) * 1000)
 
@@ -39,7 +36,8 @@ class RatTrial(Trial):
                 if trial_type.value in self.name:
                     self.trial_type = trial_type
                     break
-            raise ValueError("Trial type must be specified if not inferrable from name")
+            else:
+                raise ValueError("Trial type must be specified if not inferrable from name")
         return self
     
     def validate_trial(self) -> bool:
@@ -62,7 +60,9 @@ class RatTrial(Trial):
             return False
         for parameter in self.required_parameters:
             if parameter not in self.parameters:
+                logger.info(f"Trial {self.name} is missing required parameter {parameter}")
                 return False
+        logger.info(f"Trial {self.name} is a valid static trial")
         return True
 
     def valid_walk(self) -> bool:
@@ -107,27 +107,27 @@ class RatTrial(Trial):
             logger.info(f"Trial {self.name} has gaps in required markers between events")
             return False
         return True
-
+    
     def thigh_mass(self):
         mass = self.parameters["Mass"]
         return (7.3313*mass+3.6883)/1000
 
     def thigh_com(self, side: str) -> tuple[float, float, float]:
         side = side.capitalize()
-        if side not in ["Left", "Right"]:
-            raise ValueError("Side must be 'Left' or 'Right'")
+        if side not in ["L", "R"]:
+            raise ValueError("Side must be 'L' or 'R'")
         femur_length = self.parameters[f"{side}FemurLength"]
         mass = self.parameters["Mass"]
         return (
             femur_length*(-8.7844332/100000), 
             mass*0.148741316*(-42.118041/100), 
-            mass*0.098448042*(2.00427791/100) * -1 if side == "Left" else 1
+            mass*0.098448042*(2.00427791/100) * -1 if side == "L" else 1
         )
     
     def thigh_moi(self, side: str) -> tuple[float, float, float]:
         side = side.capitalize()
-        if side not in ["Left", "Right"]:
-            raise ValueError("Side must be 'Left' or 'Right'")
+        if side not in ["L", "R"]:
+            raise ValueError("Side must be 'L' or 'R'")
         femur_length = self.parameters[f"{side}FemurLength"]
         mass = self.parameters["Mass"]
         return (
@@ -142,20 +142,20 @@ class RatTrial(Trial):
     
     def shank_com(self, side: str) -> tuple[float, float, float]:
         side = side.capitalize()
-        if side not in ["Left", "Right"]:
-            raise ValueError("Side must be 'Left' or 'Right'")
+        if side not in ["L", "R"]:
+            raise ValueError("Side must be 'L' or 'R'")
         tibia_length = self.parameters[f"{side}TibiaLength"]
         mass = self.parameters["Mass"]
         return (
             (mass)*0.09004923*(-2.43352222/100), 
             tibia_length*(67.363643/100000), 
-            (mass*0.07731125)*(1.71207065/100) * -1 if side == "Left" else 1
+            (mass*0.07731125)*(1.71207065/100) * -1 if side == "L" else 1
         )
         
     def shank_moi(self, side: str) -> tuple[float, float, float]:
         side = side.capitalize()
-        if side not in ["Left", "Right"]:
-            raise ValueError("Side must be 'Left' or 'Right'")
+        if side not in ["L", "R"]:
+            raise ValueError("Side must be 'L' or 'R'")
         tibia_length = self.parameters[f"{side}TibiaLength"]
         mass = self.parameters["Mass"]
         return (
@@ -170,20 +170,20 @@ class RatTrial(Trial):
     
     def foot_com(self, side: str) -> tuple[float, float, float]:
         side = side.capitalize()
-        if side not in ["Left", "Right"]:
-            raise ValueError("Side must be 'Left' or 'Right'")
+        if side not in ["L", "R"]:
+            raise ValueError("Side must be 'L' or 'R'")
         foot_length = self.parameters[f"{side}FootLength"]
         mass = self.parameters["Mass"]
         return (
             (mass*0.04627387)*(-4.294993/100),
             foot_length*(-42.78009/100000),
-            (mass*0.07246637)*(0.6265934/100) * -1 if side == "Left" else 1
+            (mass*0.07246637)*(0.6265934/100) * -1 if side == "L" else 1
         ) # TODO: Still need to check the weird thing Brody does with this in the old code
         
     def foot_moi(self, side: str) -> tuple[float, float, float]:
         side = side.capitalize()
-        if side not in ["Left", "Right"]:
-            raise ValueError("Side must be 'Left' or 'Right'")
+        if side not in ["L", "R"]:
+            raise ValueError("Side must be 'L' or 'R'")
         foot_length = self.parameters[f"{side}FootLength"]
         mass = self.parameters["Mass"]
         return (
@@ -225,7 +225,7 @@ class RatTrial(Trial):
         scale_tool.setSubjectMass(self.parameters["Mass"])
         
         # Manual scaling factors
-        for side in ["Left", "Right"]:
+        for side in ["L", "R"]:
             for body_part in ["Femur", "Tibia"]:
                 side_short = side[0].lower()
                 part_length = self.parameters[f"{side}{body_part}Length"]
@@ -256,7 +256,7 @@ class RatTrial(Trial):
         marker_model.setName(marker_model_name.replace(".osim", ""))
         
         for model in [scaled_model, marker_model]:
-            for side in ["Left", "Right"]:
+            for side in ["L", "R"]:
                 side_short = side[0].lower()
                 model_body_set: osim.BodySet = model.getBodySet()
                 

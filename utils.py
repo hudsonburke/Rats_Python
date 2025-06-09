@@ -26,7 +26,7 @@ def c3d_scan(root_directory: str) -> list[str]:
     return c3d_files
 
 from typing import Generator
-def c3d_scan_gen(root_directory: str) -> Generator[str]:
+def c3d_scan_gen(root_directory: str) -> Generator[str, None, None]:
     """
     Generator to scan the given root directory for C3D files.
     
