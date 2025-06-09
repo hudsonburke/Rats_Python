@@ -1,4 +1,4 @@
-from ..Toolbox_Python.trial import Trial
+from trial import Trial
 from enum import Enum
 from pydantic import model_validator
 from loguru import logger
@@ -11,13 +11,14 @@ class RatTrialType(str, Enum):
 
 class RatTrial(Trial):
     
-    required_markers = [
+    
+    required_markers: list[str] = [
         "TAIL", "SPL6", "LASI", "RASI", # Torso
         "LHIP", "LKNE", "LANK", "LTOE", # Left leg
         "RHIP", "RKNE", "RANK", "RTOE"  # Right leg
     ]
     
-    required_parameters = [
+    required_parameters: list[str] = [
         "Mass",
         "Length",
         "RightFemurLength",
@@ -27,9 +28,9 @@ class RatTrial(Trial):
         "LeftTibiaLength",
         "LeftFootLength",
     ]
-    
-    base_femur_length = np.linalg.norm([-0.0035000000000000001, -0.031199999999999999, -0.0050000000000000001])*1000
-    base_tibia_length = np.linalg.norm([0.0016000000000000001, 0.039, -0.0037000000000000002])*1000
+
+    base_femur_length: float = float(np.linalg.norm([-0.0035000000000000001, -0.031199999999999999, -0.0050000000000000001]) * 1000)
+    base_tibia_length: float = float(np.linalg.norm([0.0016000000000000001, 0.039, -0.0037000000000000002]) * 1000)
 
     @model_validator(mode='after')
     def _check_trial_type(self):
