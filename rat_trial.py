@@ -4,7 +4,6 @@ from pydantic import model_validator
 from loguru import logger
 import numpy as np
 
-
 class RatTrialType(str, Enum):
     STATIC = "Static"
     WALK = "Walk"
@@ -107,7 +106,7 @@ class RatTrial(Trial):
             logger.info(f"Trial {self.name} has gaps in required markers between events")
             return False
         return True
-    
+
     def thigh_mass(self):
         mass = self.parameters["Mass"]
         return (7.3313*mass+3.6883)/1000

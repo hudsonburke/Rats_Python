@@ -1,5 +1,4 @@
 import ezc3d
-import xarray as xr
 from pydantic import BaseModel, model_validator, ConfigDict
 from enum import Enum
 from abc import ABC, abstractmethod 
@@ -112,9 +111,8 @@ class Marker(TimeSeries):
 
 class Points(TimeSeriesGroup):
     units: str # All points must have the same units
-    trajectories: dict[str, Marker]
+    trajectories: dict[str, TimeSeries]
     
-
 class Analog(TimeSeries):
     units: str
     class _AnalogDataFrameSchema(pt.Model):
@@ -167,8 +165,7 @@ class Trial(BaseModel):
     def to_trc(self, filepath: str, rotation = [[1, 0, 0], [0, 0, 1], [0, -1, 0]]):
         """
         Export the trial data to TRC file format.
-        """
-        
+        """  
         raise NotImplementedError("Export to TRC file format is not implemented yet.")
 
     def to_fp(self, filepath: str):
@@ -535,8 +532,7 @@ class Trial(BaseModel):
     def _cache_point_gaps(self) -> 'Trial':
         self.point_gaps = self.check_point_gaps()
         return self
-
-    
+ 
     def find_full_frames(self, marker_names: list[str] | None = None) -> list[int]:
         """
         Find all frames where all specified markers have data.
