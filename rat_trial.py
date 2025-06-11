@@ -2,6 +2,7 @@ from trial import Trial
 from enum import Enum
 from pydantic import model_validator
 from loguru import logger
+import polars as pl
 import numpy as np
 
 class RatTrialType(str, Enum):
@@ -25,8 +26,12 @@ class RatTrial(Trial):
         "LTibiaLength",
         "LFootLength",
     ]
+    
     base_femur_length: float = float(np.linalg.norm([-0.0035000000000000001, -0.031199999999999999, -0.0050000000000000001]) * 1000)
     base_tibia_length: float = float(np.linalg.norm([0.0016000000000000001, 0.039, -0.0037000000000000002]) * 1000)
+    
+    angles: pl.DataFrame | None = None
+    moments: pl.DataFrame | None = None
 
     @model_validator(mode='after')
     def _check_trial_type(self):
@@ -274,7 +279,6 @@ class RatTrial(Trial):
                 foot.set_mass_center(osim.Vec3(*self.foot_com(side)))
                 foot.set_inertia(osim.Inertia(*self.foot_moi(side), 0, 0, 0))
             model.printToXML(model.getName() + ".osim")
-
 
     def inverse_kinematics(self, model_path: str, output_path: str | None = None):
         import opensim as osim
