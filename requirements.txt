@@ -1,0 +1,10 @@
+polars
+ezc3d
+patito
+pydantic
+loguru
+numpy
+plotly
+matplotlib
+scipy
+opensim

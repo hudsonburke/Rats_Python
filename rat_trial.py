@@ -30,14 +30,12 @@ class RatTrial(Trial):
     base_femur_length: float = float(np.linalg.norm([-0.0035000000000000001, -0.031199999999999999, -0.0050000000000000001]) * 1000)
     base_tibia_length: float = float(np.linalg.norm([0.0016000000000000001, 0.039, -0.0037000000000000002]) * 1000)
     
-    angles: pl.DataFrame | None = None
-    moments: pl.DataFrame | None = None
 
     @model_validator(mode='after')
     def _check_trial_type(self):
         if not self.trial_type:
             for trial_type in RatTrialType:
-                if trial_type.value in self.name:
+                if trial_type.value.lower() in self.name.lower():
                     self.trial_type = trial_type
                     break
             else:
@@ -110,6 +108,9 @@ class RatTrial(Trial):
         if self.check_point_gaps(self.required_markers, regions = [(first_event, last_event)]):
             logger.info(f"Trial {self.name} has gaps in required markers between events")
             return False
+        
+        # Check for force plate contexts labeled for left and right
+        
         return True
 
     def thigh_mass(self):
@@ -195,6 +196,21 @@ class RatTrial(Trial):
             (0.0000518802)*(mass)*(foot_length/1000)**2,
             (0.000364591)*(mass)*(foot_length/1000)**2
         )
+
+    def auto_identify_events(self):
+        # Automatically identify events in a rat walk trial
+        if self.trial_type != RatTrialType.WALK:
+            raise ValueError("Trial is not a valid walk trial")
+        # Correlate marker positions with force plate data to identify events
+        
+    def autocorrelate_forceplates(self):
+        # Automatically correlate force plates with left and right feet
+        if self.trial_type != RatTrialType.WALK:
+            raise ValueError("Trial is not a valid walk trial")
+        # Use the first frame of each foot strike to determine which force plate corresponds to which foot
+        # This will be done by checking the marker positions at the time of the event
+        # and matching them with the force plate data
+        pass
 
     # TODO: Check paths
     def create_scaled_model(self, 

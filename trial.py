@@ -316,11 +316,18 @@ class Trial(BaseModel):
         """
         Create a Trial instance from a C3D file.
         """
+        import os
         # Check that the file exists and is a valid C3D file
+        file_path = os.path.normpath(file_path)
         if not file_path.endswith('.c3d'):
             raise ValueError("File must be a C3D file.")
-        c3d_object = ezc3d.c3d(file_path, extract_forceplat_data=True)
-        split_path = file_path.split('/')
+        try:
+            c3d_object = ezc3d.c3d(file_path, extract_forceplat_data=True)
+        except Exception as e:
+            logger.error(f"Failed to read C3D file {file_path}: {e}")
+            c3d_object = ezc3d.c3d()
+            # raise ValueError(f"Invalid C3D file: {file_path}") from e
+        split_path = file_path.split(os.sep)
         trial_name = split_path[-1].replace('.c3d', '')
         session_name = split_path[-2] if len(split_path) > 1 else ""
         classification = split_path[-4] if len(split_path) > 3 else ""
