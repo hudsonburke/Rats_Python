@@ -31,19 +31,22 @@ class Event(BaseModel):
             raise ValueError("Only one of frames or times should be provided.")
         return self
 
-    def get_frame(self, point_rate: float | None) -> int | None:
+    def get_frame(self, point_rate: float | None) -> int:
         if self.frame is not None:
             return self.frame
         if self.time is not None and point_rate is not None and point_rate > 0:
             return int(self.time * point_rate)
-        return None
+        # This should not happen if validate_frames_or_times is called first
+        raise ValueError("Cannot compute frame without point rate or time.")
+        
 
-    def get_time(self, point_rate: float | None) -> float | None:
+    def get_time(self, point_rate: float | None) -> float:
         if self.time is not None:
             return self.time
         if self.frame is not None and point_rate is not None and point_rate > 0:
             return self.frame / point_rate
-        return None
+        # This should not happen if validate_frames_or_times is called first
+        raise ValueError("Cannot compute time without point rate or frame.")
     
 class ImportMethod(str, Enum):
     C3D = "C3D"
@@ -75,7 +78,7 @@ class TimeSeriesGroup(BaseModel):
     def time_from_frame(self, frame: int) -> float:
         if frame < self.first_frame or frame > self.last_frame:
             raise ValueError("Frame out of bounds")
-        return (frame - 1) / self.rate
+        return frame / self.rate
 
 class TimeSeries(BaseModel, ABC):
     model_config = ConfigDict(arbitrary_types_allowed=True)
@@ -96,7 +99,7 @@ class TimeSeries(BaseModel, ABC):
             self.data_schema.validate(self.data)
         return self
 
-class Marker(TimeSeries):
+class MarkerTrajectory(TimeSeries):
     class _MarkerDataFrameSchema(pt.Model):
         x: float
         y: float
@@ -108,10 +111,28 @@ class Marker(TimeSeries):
     @property
     def data_schema(self) -> type[pt.Model]:
         return self._MarkerDataFrameSchema
+    
+    @property
+    def coords(self) -> np.ndarray:
+        return self.data.select(['x', 'y', 'z']).to_numpy() if self.data is not None else np.array([])
 
 class Points(TimeSeriesGroup):
     units: str # All points must have the same units
-    trajectories: dict[str, TimeSeries]
+    trajectories: dict[str, MarkerTrajectory]
+    
+    def get_marker_coords(self, marker_name: str, frame: int | None = None) -> np.ndarray | None:
+        if marker_name not in self.trajectories:
+            return None
+        marker = self.trajectories[marker_name]
+        if frame is None:
+            return marker.coords
+        if frame < self.first_frame or frame > self.last_frame:
+            return None
+        # Get the row corresponding to the frame
+        row_index = frame - self.first_frame
+        if row_index < 0 or row_index >= len(marker.data):
+            return None
+        return marker.coords[row_index]
     
 class Analog(TimeSeries):
     units: str
@@ -154,6 +175,16 @@ class Trial(BaseModel):
     
     analogs: Analogs
     
+    def get_events(self, label: str = "", context: str = "") -> list[Event]:
+        """
+        Return a copy of the events list filtered by label and context.
+        If label or context is empty, it will not filter by that parameter.
+        """
+        return [
+            event for event in self.events
+            if (not label or event.label == label) and (not context or event.context == context)
+        ]
+    
     @model_validator(mode='after')
     def order_events(self) -> 'Trial':
         """
@@ -162,17 +193,31 @@ class Trial(BaseModel):
         self.events = sorted(self.events, key=lambda e: (e.get_frame(self.points.rate), e.get_time(self.points.rate)))
         return self
         
-    def to_trc(self, filepath: str, rotation = [[1, 0, 0], [0, 0, 1], [0, -1, 0]]):
+    def to_trc(self, filepath: str):
         """
-        Export the trial data to TRC file format.
+        Export the trial data to TRC file format used by OpenSim
         """  
-        raise NotImplementedError("Export to TRC file format is not implemented yet.")
-
-    def to_fp(self, filepath: str):
-        """
-        Export the trial data to opensim force platform files
-        """
-        raise NotImplementedError("Export to FP file format is not implemented yet.")
+        import opensim as osim
+        table = osim.TimeSeriesTableVec3()
+        markers = list(self.points.trajectories.keys())
+        table.setColumnLabels(markers)
+        table.addTableMetaDataString("Units", self.points.units)
+        table.addTableMetaDataString("DataRate", str(self.points.rate))
+        for frame in range(self.points.first_frame, self.points.last_frame + 1):
+            row = []
+            for marker_name in markers:
+                coords = self.points.get_marker_coords(marker_name, frame)
+                if coords is not None:
+                    row.append(osim.Vec3(coords[0], coords[1], coords[2]))
+                else:
+                    row.append(osim.Vec3().setToNaN())
+            time = self.points.time_from_frame(frame)
+            table.appendRow(time, osim.RowVectorVec3(row))
+        adapter = osim.TRCFileAdapter()
+        # Make sure the directories exist
+        import os
+        os.makedirs(os.path.dirname(filepath), exist_ok=True)
+        adapter.write(table, filepath)
 
     @staticmethod
     def _get_c3d_param(c3d_object: ezc3d.c3d, *keys, default=None):
@@ -240,7 +285,11 @@ class Trial(BaseModel):
         parameters = {}
         if 'PROCESSING' in c3d_parameters:
             for key, value in c3d_parameters['PROCESSING'].items():
-                parameters[key] = value.get('value', None)
+                arr = value.get('value', None)
+                if arr is not None and len(arr) == 1:
+                    parameters[key] = arr[0]
+                else:
+                    parameters[key] = arr
                 
         ## Data 
         # Points
@@ -258,7 +307,7 @@ class Trial(BaseModel):
         #     logger.warning(f"Point scale {point_scale} is not 1. Scaling point data accordingly.")
         #     point_data = point_data * point_scale
         for i, label in enumerate(point_labels):
-            trajectories[label] = Marker(
+            trajectories[label] = MarkerTrajectory(
                 data=pl.DataFrame({
                 'x': point_data[0, i, :],
                 'y': point_data[1, i, :],

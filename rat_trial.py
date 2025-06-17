@@ -64,7 +64,6 @@ class RatTrial(Trial):
             if parameter not in self.parameters:
                 logger.info(f"Trial {self.name} is missing required parameter {parameter}")
                 return False
-        logger.info(f"Trial {self.name} is a valid static trial")
         return True
 
     def valid_walk(self) -> bool:
@@ -113,6 +112,164 @@ class RatTrial(Trial):
         
         return True
 
+    # Spatiotemporal parameters  -- Currently following Huxham et al. 2006 for straight line gait
+    # TODO: Implement Dingwell 2024 calculations
+    def stride_time(self)->dict[str,list[float]]:
+        """
+        """
+        times = {"Left": [], "Right": []}
+        for side in ["Left", "Right"]:
+            foot_strike = self.get_events(label="Foot Strike", context=side)
+            if not foot_strike:
+                logger.warning(f"No foot strike events found for {side} side")
+                continue
+            foot_strike_times = [event.get_time(self.points.rate) for event in foot_strike]
+            if len(foot_strike_times) < 2:
+                logger.warning(f"Not enough foot strike events for {side} side to calculate stride time")
+                continue
+            for i in range(len(foot_strike_times) - 1):
+                start_time = foot_strike_times[i]
+                end_time = foot_strike_times[i + 1]
+                time_diff = end_time - start_time
+                times[side].append(time_diff)
+        return times
+    
+    def stride_length(self)->dict[str,list[float]]:
+        lengths = {"Left": [], "Right": []}
+        for side in ["Left", "Right"]:
+            foot_marker = side[0].upper() + "TOE"
+            if foot_marker not in self.points.trajectories:
+                logger.warning(f"Marker {foot_marker} not found in trial points")
+                continue
+            foot_strike = self.get_events(label="Foot Strike", context=side)
+            if not foot_strike:
+                logger.warning(f"No foot strike events found for {side} side")
+                continue
+            foot_strike_frames = [event.get_frame(self.points.rate) for event in foot_strike]
+            if len(foot_strike_frames) < 2:
+                logger.warning(f"Not enough foot strike events for {side} side to calculate stride length")
+                continue
+            for i in range(len(foot_strike_frames) - 1):
+                start_frame = foot_strike_frames[i]
+                end_frame = foot_strike_frames[i + 1]
+                start_pos = self.points.get_marker_coords(foot_marker, start_frame)
+                end_pos = self.points.get_marker_coords(foot_marker, end_frame)
+                if start_pos is None or end_pos is None:
+                    logger.warning(f"Missing marker position for {foot_marker} at frames {start_frame} or {end_frame}")
+                    continue
+                length = np.linalg.norm(np.array(end_pos) - np.array(start_pos))
+                lengths[side].append(length)
+        return lengths
+
+    def stride_width(self):
+        raise NotImplementedError("Stride width calculation is not implemented yet.")
+
+    def stride_velocity(self)->dict[str,list[float]]:
+        stride_lengths = self.stride_length()
+        stride_times = self.stride_time()
+        velocities = {"Left": [], "Right": []}
+
+        for side in ["Left", "Right"]:
+            lengths = stride_lengths.get(side, [])
+            times = stride_times.get(side, [])
+            
+            if not lengths or not times:
+                logger.warning(f"Not enough data to calculate stride velocity for {side} side")
+                continue
+
+            # Ensure we have a 1:1 mapping of lengths to times
+            # This assumes that stride_length and stride_time will return lists of the same length for a given side
+            # and that the i-th length corresponds to the i-th time.
+            for i in range(min(len(lengths), len(times))):
+                if times[i] == 0: # Avoid division by zero
+                    logger.warning(f"Stride time is zero for {side} side, cannot calculate velocity for stride {i}")
+                    velocities[side].append(float('nan')) # Or handle as appropriate
+                else:
+                    velocities[side].append(lengths[i] / times[i])
+            
+            if len(lengths) != len(times):
+                logger.warning(f"Mismatch in number of stride lengths and times for {side} side. Velocity calculated for {min(len(lengths), len(times))} strides.")
+
+        return velocities
+
+    def stride_cadence(self)->dict[str,list[float]]:
+        """
+        """
+        velocities = self.stride_velocity()
+        cadences = {"Left": [1/vel for vel in velocities.get("Left", []) if vel != 0],
+                    "Right": [1/vel for vel in velocities.get("Right", []) if vel != 0]}
+        return cadences
+
+    def step_time(self) -> dict[str, list[float]]:
+        """
+        Step time is calculated as the time from foot strike to next contralateral foot strike
+        """
+        left_foot_strikes = self.get_events(label="Foot Strike", context="Left")
+        right_foot_strikes = self.get_events(label="Foot Strike", context="Right")
+        times = {"Left": [], "Right": []}
+        
+        
+        return times
+
+    def step_length(self):
+        """
+        """
+        pass
+
+    def step_width(self)->list[float]:
+        """
+        """
+        widths = []
+        return widths
+    
+    def step_velocity(self):
+        pass
+    
+    def step_cadence(self)->list[float]:
+        """
+        """
+        cadences=[]
+        return cadences
+
+    def stance_time(self) -> dict[str, list[float]]:
+        """
+        Calculates the stance time for each stride as the time between foot strike and foot off events for one side
+        """
+        times = {"Left": [], "Right": []}
+        for side in ["Left", "Right"]:
+            foot_strike = self.get_events(label="Foot Strike", context=side)
+            foot_off = self.get_events(label="Foot Off", context=side)
+            if not foot_strike:
+                logger.warning(f"No foot strike events found for {side} side")
+                continue
+            if not foot_off:
+                logger.warning(f"No foot off events found for {side} side")
+                continue
+            foot_strike_times = [event.get_time(self.points.rate) for event in foot_strike]
+            foot_off_times = [event.get_time(self.points.rate) for event in foot_off]
+            
+    def stance_percentage(self) -> dict[str, list[float]]:
+        """
+        Calculates the percentage of stance time for each stride 
+        """
+        percentages = {"Left": [], "Right": []}
+        stance_times = self.stance_time()
+        stride_times = self.stride_time()
+        for side in ["Left", "Right"]:
+            stance = stance_times.get(side, [])
+            stride = stride_times.get(side, [])
+            if not stance or not stride:
+                logger.warning(f"Not enough data to calculate stance percentage for {side} side")
+                continue
+            for i in range(min(len(stance), len(stride))):
+                if stride[i] == 0:
+                    logger.warning(f"Stride time is zero for {side} side, cannot calculate stance percentage for stride {i}")
+                    percentages[side].append(float('nan'))
+                else:
+                    percentage = (stance[i] / stride[i]) * 100
+                    percentages[side].append(percentage)
+        return percentages
+            
     def thigh_mass(self):
         mass = self.parameters["Mass"]
         return (7.3313*mass+3.6883)/1000
@@ -213,28 +370,39 @@ class RatTrial(Trial):
         pass
 
     # TODO: Check paths
-    def create_scaled_model(self, 
+    def create_scaled_opensim(self,                             
                             unscaled_model_path:str, 
                             marker_set_path:str, 
+                            marker_file_name:str,
                             output_dir:str = '.', 
+                            scale_setup_path: str | None = None
                             ):
+        """
+        OpenSim's path handling is trash and inconsistent
+        I am so sick of it
+        """
         if self.trial_type != "Static" or not self.valid_static():
             raise ValueError("Trial is not a valid static trial")
         
-        import os
-        os.chdir(output_dir)
-        
         import opensim as osim
-        scale_tool = osim.ScaleTool()
+        import os
+        unscaled_model_path = os.path.abspath(unscaled_model_path)
+        marker_set_path = os.path.abspath(marker_set_path)
+        output_dir = os.path.abspath(output_dir)
+        
+        if scale_setup_path is not None and os.path.exists(scale_setup_path):
+            scale_tool = osim.ScaleTool(os.path.abspath(scale_setup_path))
+        else:
+            scale_tool = osim.ScaleTool()
         scale_tool.setName(self.name)
         
-        model_scaler : osim.ModelScaler = scale_tool.getModelScaler()
+        model_scaler: osim.ModelScaler = scale_tool.getModelScaler()
         model_scaler.setApply(True)
-        scaled_model_name = f"{self.name}_scaled.osim"
+        scaled_model_name = os.path.join(output_dir, f"{self.name}_scaled.osim")
         model_scaler.setOutputModelFileName(scaled_model_name)
-        model_scaler.setOutputScaleFileName(f"{self.name}_scale.xml")
-        model_scaler.setMarkerFileName(f"{self.name}.trc")
-        
+        model_scaler.setOutputScaleFileName(os.path.join(output_dir, f"{self.name}_scale.xml"))
+        model_scaler.setMarkerFileName(marker_file_name)
+
         time_range = osim.ArrayDouble()
         first_time = self.points.time_from_frame(self.points.first_frame)
         last_time = self.points.time_from_frame(self.points.last_frame)
@@ -245,34 +413,33 @@ class RatTrial(Trial):
         scale_tool.setSubjectMass(self.parameters["Mass"])
         
         # Manual scaling factors
-        for side in ["L", "R"]:
-            for body_part in ["Femur", "Tibia"]:
-                side_short = side[0].lower()
-                part_length = self.parameters[f"{side}{body_part}Length"]
-                base_length = self.base_femur_length if body_part == "Femur" else self.base_tibia_length
-                scale_factor = part_length / base_length
-                model_scaler.getScaleSet().get(f"{body_part.lower()}_{side_short}").setScaleFactors(osim.Vec3(scale_factor))
-
-        marker_placer : osim.MarkerPlacer = scale_tool.getMarkerPlacer()
+        scale_set: osim.ScaleSet = model_scaler.getScaleSet()
+        scale_set.get(0).setScaleFactors(osim.Vec3(self.parameters["RFemurLength"]/self.base_femur_length))
+        scale_set.get(1).setScaleFactors(osim.Vec3(self.parameters["RTibiaLength"]/self.base_tibia_length))
+        scale_set.get(2).setScaleFactors(osim.Vec3(self.parameters["LFemurLength"]/self.base_femur_length))
+        scale_set.get(3).setScaleFactors(osim.Vec3(self.parameters["LTibiaLength"]/self.base_tibia_length))
+        
+        marker_placer: osim.MarkerPlacer = scale_tool.getMarkerPlacer()
         marker_placer.setApply(True)
         marker_model_name = f"{self.name}_marker.osim"
         marker_placer.setOutputModelFileName(marker_model_name)
-        marker_placer.setMarkerFileName(f"{self.name}.trc")
+        marker_placer.setMarkerFileName(marker_file_name)
         marker_placer.setTimeRange(time_range)
         
-        generic_model_maker : osim.GenericModelMaker = scale_tool.getGenericModelMaker()
+        generic_model_maker: osim.GenericModelMaker = scale_tool.getGenericModelMaker()
         generic_model_maker.setModelFileName(unscaled_model_path)
         generic_model_maker.setMarkerSetFileName(marker_set_path)
 
-        scale_tool.printToXML(f"{self.name}_scale_setup.xml")
-        scale_tool = osim.ScaleTool(f"{self.name}_scale_setup.xml")
-        
+        scale_setup_path = os.path.join(output_dir, f"{self.name}_scale_setup.xml")
+        scale_tool.printToXML(scale_setup_path)
+        scale_tool = osim.ScaleTool(scale_setup_path)
+
         scale_tool.run()
         
         scaled_model = osim.Model(scaled_model_name)
         scaled_model.setName(scaled_model_name.replace(".osim", ""))
 
-        marker_model = osim.Model(marker_model_name)
+        marker_model = osim.Model(os.path.join(output_dir, marker_model_name))
         marker_model.setName(marker_model_name.replace(".osim", ""))
         
         for model in [scaled_model, marker_model]:
@@ -283,20 +450,22 @@ class RatTrial(Trial):
                 thigh: osim.Body = model_body_set.get(f"femur_{side_short}")
                 thigh.set_mass(self.thigh_mass())
                 thigh.set_mass_center(osim.Vec3(*self.thigh_com(side)))
-                thigh.set_inertia(osim.Inertia(*self.thigh_moi(side), 0, 0, 0))
+                thigh.set_inertia(osim.Vec6(*self.thigh_moi(side), 0, 0, 0))
 
                 shank: osim.Body = model_body_set.get(f"tibia_{side_short}")
                 shank.set_mass(self.shank_mass())
                 shank.set_mass_center(osim.Vec3(*self.shank_com(side)))
-                shank.set_inertia(osim.Inertia(*self.shank_moi(side), 0, 0, 0))
+                shank.set_inertia(osim.Vec6(*self.shank_moi(side), 0, 0, 0))
 
                 foot: osim.Body = model_body_set.get(f"foot_{side_short}")
                 foot.set_mass(self.foot_mass())
                 foot.set_mass_center(osim.Vec3(*self.foot_com(side)))
-                foot.set_inertia(osim.Inertia(*self.foot_moi(side), 0, 0, 0))
-            model.printToXML(model.getName() + ".osim")
+                foot.set_inertia(osim.Vec6(*self.foot_moi(side), 0, 0, 0))
+            out_path = os.path.join(output_dir, model.getName() + ".osim")
+            model.printToXML(out_path)
+            logger.info(f"Scaled model saved to {out_path}")
 
-    def inverse_kinematics(self, model_path: str, output_path: str | None = None):
+    def inverse_kinematics_opensim(self, model_path: str, output_path: str | None = None):
         import opensim as osim
         
         if output_path is None:
@@ -306,8 +475,9 @@ class RatTrial(Trial):
         ik_tool = osim.InverseKinematicsTool()
         ik_tool.setName(self.name)
         ik_tool.setModel(model_path)
+        ik_tool.setMarkerDataFileName(f"{self.name}.trc")
 
-    def inverse_dynamics(self, model_path:str, output_path: str | None = None):
+    def inverse_dynamics_opensim(self, model_path:str, output_path: str | None = None):
         import opensim as osim
 
         if output_path is None:
@@ -317,3 +487,36 @@ class RatTrial(Trial):
         id_tool = osim.InverseDynamicsTool()
         id_tool.setName(self.name)
         id_tool.setModel(model_path)
+    
+    # def create_scaled_mjcf(self,
+    #                         unscaled_model_path: str,
+    #                         output_path: str | None = None
+    #                         ):
+    #     if self.trial_type != "Static" or not self.valid_static():
+    #         raise ValueError("Trial is not a valid static trial")
+    #     import mujoco as mjc
+    #     spec = mjc.MjSpec.from_file(unscaled_model_path)
+        
+    #     for side in ['Left', 'Right']:
+    #         femur = f"femur_{side[0].lower()}"
+    #         femur = spec.body(f"{femur}")
+    #         femur.mass = self.thigh_mass()
+    #         femur.ipos = self.thigh_com(side[0])                
+    #         femur.inertia = list(self.thigh_moi(side[0]))
+            
+    #         tibia = f"tibia_{side[0].lower()}"
+    #         tibia = spec.body(f"{tibia}")
+    #         tibia.mass = self.shank_mass()
+    #         tibia.ipos = self.shank_com(side[0])
+    #         tibia.inertia = list(self.shank_moi(side[0]))
+            
+    #         foot = f"foot_{side[0].lower()}"
+    #         foot = spec.body(f"{foot}")
+    #         foot.mass = self.foot_mass()
+    #         foot.ipos = self.foot_com(side[0])
+    #         foot.inertia = list(self.foot_moi(side[0]))
+        
+        
+    #     self.mjcf_model = spec.compile()
+    #     spec.to_xml()
+

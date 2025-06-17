@@ -44,3 +44,18 @@ def c3d_scan_gen(root_directory: str) -> Generator[str, None, None]:
             elif entry.is_dir():
                 yield from c3d_scan_gen(entry.path)
                 
+import os
+import re 
+def scandir_regex(directory, pattern):
+    """
+    Iterates through directory entries and yields names that match the pattern.
+    """
+    with os.scandir(directory) as entries:
+        for entry in entries:
+            if entry.is_file() and re.match(pattern, os.path.normpath(entry.path)):
+                yield entry.path
+            elif entry.is_dir():
+                yield from scandir_regex(entry.path, pattern)
+
+
+                
