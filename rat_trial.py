@@ -1,9 +1,11 @@
+from pydantic import BaseModel
+from loguru import logger
 from trial import Trial
 from enum import Enum
 from pydantic import model_validator
-from loguru import logger
-import polars as pl
 import numpy as np
+import os
+import opensim as osim
 
 class RatTrialType(str, Enum):
     STATIC = "Static"
@@ -30,7 +32,6 @@ class RatTrial(Trial):
     base_femur_length: float = float(np.linalg.norm([-0.0035000000000000001, -0.031199999999999999, -0.0050000000000000001]) * 1000)
     base_tibia_length: float = float(np.linalg.norm([0.0016000000000000001, 0.039, -0.0037000000000000002]) * 1000)
     
-
     @model_validator(mode='after')
     def _check_trial_type(self):
         if not self.trial_type:
@@ -369,26 +370,28 @@ class RatTrial(Trial):
         # and matching them with the force plate data
         pass
 
-    # TODO: Check paths
-    def create_scaled_opensim(self,                             
-                            unscaled_model_path:str, 
-                            marker_set_path:str, 
-                            marker_file_name:str,
-                            output_dir:str = '.', 
+    def scale_opensim_model(self,                             
+                            unscaled_model_path: str, 
+                            marker_set_path: str, 
+                            marker_file_name: str,
+                            output_dir: str = '.', 
                             scale_setup_path: str | None = None
                             ):
         """
-        OpenSim's path handling is trash and inconsistent
-        I am so sick of it
-        """
-        if self.trial_type != "Static" or not self.valid_static():
-            raise ValueError("Trial is not a valid static trial")
+        Create scaled OpenSim models (one with markers moved, one without) from a static rat trial.
+        Args:
+            unscaled_model_path (str): Path to the unscaled OpenSim model file (.osim).
+            marker_set_path (str): Path to the marker set file (.xml).
+            marker_file_name (str): Name of the marker file to be used for scaling. Needs to be in the same directory as the unscaled model.
+            output_dir (str): Directory where the scaled models and scale setup will be saved.
+            scale_setup_path (str | None): Path to an existing scale setup file. If None, a new one will be created.
         
-        import opensim as osim
-        import os
+        Note: OpenSim's path handling is trash and inconsistent
+        """        
         unscaled_model_path = os.path.abspath(unscaled_model_path)
         marker_set_path = os.path.abspath(marker_set_path)
         output_dir = os.path.abspath(output_dir)
+        marker_file_name = os.path.basename(marker_file_name) # Ensure we only use the file name, not the path
         
         if scale_setup_path is not None and os.path.exists(scale_setup_path):
             scale_tool = osim.ScaleTool(os.path.abspath(scale_setup_path))
@@ -398,9 +401,10 @@ class RatTrial(Trial):
         
         model_scaler: osim.ModelScaler = scale_tool.getModelScaler()
         model_scaler.setApply(True)
-        scaled_model_name = os.path.join(output_dir, f"{self.name}_scaled.osim")
-        model_scaler.setOutputModelFileName(scaled_model_name)
-        model_scaler.setOutputScaleFileName(os.path.join(output_dir, f"{self.name}_scale.xml"))
+        scaled_model_path = os.path.join(output_dir, f"{self.name}_scaled.osim")
+        model_scaler.setOutputModelFileName(scaled_model_path)
+        scale_factors_path = os.path.join(output_dir, f"{self.name}_scale.xml")
+        model_scaler.setOutputScaleFileName(scale_factors_path)
         model_scaler.setMarkerFileName(marker_file_name)
 
         time_range = osim.ArrayDouble()
@@ -412,7 +416,7 @@ class RatTrial(Trial):
 
         scale_tool.setSubjectMass(self.parameters["Mass"])
         
-        # Manual scaling factors
+        # Manual scaling factors - This is probably the only thing before run that cannot be abstracted out
         scale_set: osim.ScaleSet = model_scaler.getScaleSet()
         scale_set.get(0).setScaleFactors(osim.Vec3(self.parameters["RFemurLength"]/self.base_femur_length))
         scale_set.get(1).setScaleFactors(osim.Vec3(self.parameters["RTibiaLength"]/self.base_tibia_length))
@@ -432,14 +436,19 @@ class RatTrial(Trial):
 
         scale_setup_path = os.path.join(output_dir, f"{self.name}_scale_setup.xml")
         scale_tool.printToXML(scale_setup_path)
-        scale_tool = osim.ScaleTool(scale_setup_path)
+        self.link_file("scale_setup", scale_setup_path)
+        
+        scale_tool = osim.ScaleTool(scale_setup_path) # I don't think this is necessary, but it seems to be MAMP convention
 
         scale_tool.run()
+        self.link_file("scale_factors", scale_factors_path)
         
-        scaled_model = osim.Model(scaled_model_name)
-        scaled_model.setName(scaled_model_name.replace(".osim", ""))
+        
+        scaled_model = osim.Model(scaled_model_path)
+        scaled_model.setName(scaled_model_path.replace(".osim", ""))
 
-        marker_model = osim.Model(os.path.join(output_dir, marker_model_name))
+        marker_model_path = os.path.join(output_dir, marker_model_name)
+        marker_model = osim.Model(marker_model_path)
         marker_model.setName(marker_model_name.replace(".osim", ""))
         
         for model in [scaled_model, marker_model]:
@@ -463,30 +472,9 @@ class RatTrial(Trial):
                 foot.set_inertia(osim.Vec6(*self.foot_moi(side), 0, 0, 0))
             out_path = os.path.join(output_dir, model.getName() + ".osim")
             model.printToXML(out_path)
-            logger.info(f"Scaled model saved to {out_path}")
+        self.link_file("scaled_model", scaled_model_path)
+        self.link_file("marker_model", marker_model_path)
 
-    def inverse_kinematics_opensim(self, model_path: str, output_path: str | None = None):
-        import opensim as osim
-        
-        if output_path is None:
-            logger.warning("No output path specified for inverse kinematics, using working directory")
-            output_path = f"{self.name}_ik.mot"
-        
-        ik_tool = osim.InverseKinematicsTool()
-        ik_tool.setName(self.name)
-        ik_tool.setModel(model_path)
-        ik_tool.setMarkerDataFileName(f"{self.name}.trc")
-
-    def inverse_dynamics_opensim(self, model_path:str, output_path: str | None = None):
-        import opensim as osim
-
-        if output_path is None:
-            logger.warning("No output path specified for inverse dynamics, using working directory")
-            output_path = f"{self.name}_id.mot"
-
-        id_tool = osim.InverseDynamicsTool()
-        id_tool.setName(self.name)
-        id_tool.setModel(model_path)
     
     # def create_scaled_mjcf(self,
     #                         unscaled_model_path: str,
@@ -519,4 +507,62 @@ class RatTrial(Trial):
         
     #     self.mjcf_model = spec.compile()
     #     spec.to_xml()
-
+    
+    
+    
+class RatSession(BaseModel):
+    """
+    Represents a session of rat trials.
+    """
+    name: str
+    path_stem: str
+    static_trials: list[RatTrial] = []
+    static_trial: RatTrial | None = None
+    walk_trials: list[RatTrial] = []
+    
+    
+    @model_validator(mode='after')
+    def _check_trials(self):
+        if not self.static_trials:
+            raise ValueError("Session must contain at least one static trial")
+        if not self.walk_trials:
+            logger.warning("Session has no walk trials, some analyses may not be applicable")
+        return self
+       
+    
+    def opensim_analysis(self,
+                        unscaled_model_path: str,
+                        marker_set_path: str,
+                        marker_file_name: str,
+                        output_dir: str = '.',
+                        scale_setup_path: str | None = None,
+                        ):
+        # Iterate backwards until we find a valid static trial since later Static trials are more likely to be used
+        for trial in reversed(self.static_trials):
+            if trial.valid_static():
+                self.static_trial = trial
+                logger.info(f"Using static trial {trial.name} for OpenSim analysis")
+                break
+        else:
+            raise ValueError("No valid static trial found for OpenSim analysis")
+        # Ensure there is a scaled marker model
+        marker_model_path = self.static_trial.get_linked_file('marker_model')
+        if not marker_model_path:
+            self.static_trial.scale_opensim_model(unscaled_model_path, 
+                                                    marker_set_path, 
+                                                    marker_file_name, 
+                                                    output_dir, 
+                                                    scale_setup_path)
+            marker_model_path = self.static_trial.get_linked_file('marker_model')
+        
+        # Process walk trials
+        for trial in self.walk_trials:
+            if not trial.valid_walk():
+                logger.info(f"Trial {trial.name} is not a valid walk trial, skipping OpenSim analysis")
+                continue
+            # TRC
+            trial.to_trc()
+            # IK
+            # FP
+            # ID
+            pass

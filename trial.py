@@ -7,10 +7,12 @@ import numpy as np
 from loguru import logger
 import polars as pl
 import patito as pt
+import os
+import opensim as osim
 
 # Define a TypeVar that is bound by the Trial class itself
 # This means _T can be Trial or any subclass of Trial.
-_T = TypeVar("_T", bound="Trial")
+_T = TypeVar("_T", bound="Trial") # TODO: Replace with 3.12+ Generic types
 
 class Event(BaseModel): 
     """
@@ -25,10 +27,8 @@ class Event(BaseModel):
     
     @model_validator(mode='after')
     def validate_frames_or_times(self):
-        if self.frame is None and self.time is None:
-            raise ValueError("Either frames or times must be provided.")
-        if self.frame is not None and self.time is not None:
-            raise ValueError("Only one of frames or times should be provided.")
+        assert self.frame is not None or self.time is not None, "Either frames or times must be provided."
+        assert self.frame is None or self.time is None, "Only one of frames or times should be provided."
         return self
 
     def get_frame(self, point_rate: float | None) -> int:
@@ -39,7 +39,6 @@ class Event(BaseModel):
         # This should not happen if validate_frames_or_times is called first
         raise ValueError("Cannot compute frame without point rate or time.")
         
-
     def get_time(self, point_rate: float | None) -> float:
         if self.time is not None:
             return self.time
@@ -63,12 +62,9 @@ class TimeSeriesGroup(BaseModel):
         """
         Validate that first_frame is non-zero and less than last_frame and rate is positive.
         """
-        if self.first_frame < 0:
-            raise ValueError("first_frame must be non-negative")
-        if self.first_frame >= self.last_frame:
-            raise ValueError("first_frame must be less than last_frame")
-        if self.rate <= 0:
-            raise ValueError("rate must be positive")
+        assert self.first_frame >= 0, "first_frame must be non-negative"
+        assert self.first_frame < self.last_frame, "first_frame must be less than last_frame"
+        assert self.rate > 0, "rate must be positive"
         return self
     
     @property
@@ -156,6 +152,20 @@ class Analogs(TimeSeriesGroup):
     # Analogs store different channels each of which could have different units
     channels: dict[str, Analog]
 
+
+
+class OpenSimOutput(str, Enum):
+    """
+    Enum for OpenSim output types.
+    """
+    SCALED_MODEL = "scaled_model"
+    MARKER_MODEL = "marker_model"
+    TRC = "trc"
+    IK_SETUP = "ik_setup"
+    IK = "ik_results"
+    ID_SETUP = "id_setup"
+    ID = "id_results"
+
 class Trial(BaseModel):
     
     # Trial Metadata
@@ -165,6 +175,7 @@ class Trial(BaseModel):
     classification: str | None = None
     trial_type: str | None = None
     import_method: ImportMethod
+    linked_files: dict[str, str] = {} # Map of associated files, e.g. C3D file path, etc.
     
     parameters: dict[str, Any] = {}
 
@@ -193,7 +204,22 @@ class Trial(BaseModel):
         self.events = sorted(self.events, key=lambda e: (e.get_frame(self.points.rate), e.get_time(self.points.rate)))
         return self
         
-    def to_trc(self, filepath: str):
+    def link_file(self, file_key:str, file_path:str):
+        self.linked_files[file_key] = os.path.abspath(file_path)
+    
+    def get_linked_file(self, file_key: str) -> str | None:
+        """
+        Get the absolute path of an associated file by its key.
+        Returns None if the file is not associated.
+        """
+        return self.linked_files.get(file_key, None)
+    
+    def to_trc(self, 
+               filepath: str,
+               output_units: str | None = None,
+               output_axis_order: tuple[int, int, int] = (0, 1, 2),
+               rotation: np.ndarray = np.eye(3)
+               ):
         """
         Export the trial data to TRC file format used by OpenSim
         """  
@@ -201,13 +227,21 @@ class Trial(BaseModel):
         table = osim.TimeSeriesTableVec3()
         markers = list(self.points.trajectories.keys())
         table.setColumnLabels(markers)
+        conversion_factor = 1.0
+        if output_units is not None and self.points.units != output_units:
+            logger.info(f"Output units {output_units} do not match points units {self.points.units}. Converting coordinates.")
+            # Convert coordinates to the desired output units
+            
         table.addTableMetaDataString("Units", self.points.units)
         table.addTableMetaDataString("DataRate", str(self.points.rate))
         for frame in range(self.points.first_frame, self.points.last_frame + 1):
             row = []
             for marker_name in markers:
-                coords = self.points.get_marker_coords(marker_name, frame)
-                if coords is not None:
+                in_coords = self.points.get_marker_coords(marker_name, frame)
+                if in_coords is not None:
+                    coords = [in_coords[i] for i in output_axis_order]  # Reorder axes based on output_axis_order TODO - maybe check and only apply one?
+                    coords = np.array(rotation @ np.array(coords).T).T   # Apply rotation if needed
+                    coords = coords * conversion_factor # Convert coordinates if needed
                     row.append(osim.Vec3(coords[0], coords[1], coords[2]))
                 else:
                     row.append(osim.Vec3().setToNaN())
@@ -218,6 +252,7 @@ class Trial(BaseModel):
         import os
         os.makedirs(os.path.dirname(filepath), exist_ok=True)
         adapter.write(table, filepath)
+        self.link_file('trc', filepath)
 
     @staticmethod
     def _get_c3d_param(c3d_object: ezc3d.c3d, *keys, default=None):
@@ -230,11 +265,11 @@ class Trial(BaseModel):
         return param.get('value', default)
 
     @classmethod
-    def from_c3d(cls: Type[_T], # MODIFIED: cls is of type Type[_T]
+    def from_c3d(cls: Type[_T], 
                  c3d_object: ezc3d.c3d, 
                  trial_name: str = "", 
                  session_name: str = "", 
-                 classification: str = "") -> _T: # MODIFIED: Returns an instance of _T
+                 classification: str = "") -> _T: 
         """
         Create a Trial instance from a C3D object.
         """
@@ -380,7 +415,9 @@ class Trial(BaseModel):
         trial_name = split_path[-1].replace('.c3d', '')
         session_name = split_path[-2] if len(split_path) > 1 else ""
         classification = split_path[-4] if len(split_path) > 3 else ""
-        return cls.from_c3d(c3d_object, trial_name=trial_name, session_name=session_name, classification=classification)
+        trial = cls.from_c3d(c3d_object, trial_name=trial_name, session_name=session_name, classification=classification)
+        trial.link_file("c3d", file_path)
+        return trial 
 
     @classmethod
     def from_vicon_nexus(cls) -> 'Trial':
@@ -609,3 +646,36 @@ class Trial(BaseModel):
             ).select(pl.arange(0, marker_data.height)).to_series().to_list())
             full_frames &= marker_full_frames
         return sorted(full_frames)
+    
+    def run_opensim_ik(self, 
+                        model_path: str, 
+                        trc_path: str | None = None,
+                        output_dir: str = '.',
+                        start_time: float = 0.0,
+                        end_time: float = np.inf, 
+                        ik_setup_path: str | None = None
+                        ):
+        if ik_setup_path is None:
+            ik_tool = osim.InverseKinematicsTool()
+        else:
+            ik_tool = osim.InverseKinematicsTool(os.path.abspath(ik_setup_path))
+
+        ik_tool.setName(self.name)
+        model = osim.Model(os.path.abspath(model_path))
+        ik_tool.setModel(model)
+        ik_tool.setMarkerDataFileName(f"{self.name}.trc" if not trc_path else trc_path)
+        ik_results_name = f"{self.name}_ik.mot"
+        ik_results_path = os.path.join(output_dir, ik_results_name)
+        ik_tool.setOutputMotionFileName(ik_results_path)
+        ik_tool.setResultsDir(os.path.abspath(output_dir))
+        
+        # TODO: Could be pulled from trc
+        ik_tool.setStartTime(start_time)
+        ik_tool.setEndTime(end_time)
+        
+        ik_setup_path = os.path.join(output_dir, f'{self.name}_ik_setup.xml')
+        ik_tool.printToXML(ik_setup_path)
+        self.link_file(OpenSimOutput.IK_SETUP, ik_setup_path)
+        ik_tool.run()
+        self.link_file(OpenSimOutput.IK, ik_results_path)
+
