@@ -217,7 +217,6 @@ class Trial(BaseModel):
     def to_trc(self, 
                filepath: str,
                output_units: str | None = None,
-               output_axis_order: tuple[int, int, int] = (0, 1, 2),
                rotation: np.ndarray = np.eye(3)
                ):
         """
@@ -239,8 +238,7 @@ class Trial(BaseModel):
             for marker_name in markers:
                 in_coords = self.points.get_marker_coords(marker_name, frame)
                 if in_coords is not None:
-                    coords = [in_coords[i] for i in output_axis_order]  # Reorder axes based on output_axis_order TODO - maybe check and only apply one?
-                    coords = np.array(rotation @ np.array(coords).T).T   # Apply rotation if needed
+                    coords = np.array(rotation @ np.array(in_coords).T).T   # Apply rotation if needed
                     coords = coords * conversion_factor # Convert coordinates if needed
                     row.append(osim.Vec3(coords[0], coords[1], coords[2]))
                 else:
@@ -679,3 +677,38 @@ class Trial(BaseModel):
         ik_tool.run()
         self.link_file(OpenSimOutput.IK, ik_results_path)
 
+    def export_force_platforms(self, left_force_plate: str, right_force_plate: str):
+        """
+        Map force plate data to OpenSim model.
+        """
+        # Get the force plate data
+        left_data = self.get_force_plate_data(left_force_plate)
+        right_data = self.get_force_plate_data(right_force_plate)
+
+        # Map the force plate data to the OpenSim model
+        self.map_force_plate_data(left_data, right_data)
+
+    def run_opensim_id(self, 
+                        model_path: str, 
+                        ik_results_path: str | None = None,
+                        output_dir: str = '.',
+                        id_setup_path: str | None = None
+                        ):
+        if id_setup_path is None:
+            id_tool = osim.InverseDynamicsTool()
+        else:
+            id_tool = osim.InverseDynamicsTool(os.path.abspath(id_setup_path))
+
+        id_tool.setName(self.name)
+        model = osim.Model(os.path.abspath(model_path))
+        id_tool.setModel(model)
+        
+        if ik_results_path is None:
+            ik_results_name = f"{self.name}_ik.mot"
+            ik_results_path = os.path.join(output_dir, ik_results_name)
+        id_tool.setCoordinatesFileName(ik_results_path)
+        
+        id_results_name = f"{self.name}_id.mot"
+        id_results_path = os.path.join(output_dir, id_results_name)
+        id_tool.setOutputGenForceFileName(id_results_path)
+        id_tool.setResultsDir(os.path.abspath(output_dir))

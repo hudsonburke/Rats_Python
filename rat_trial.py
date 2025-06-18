@@ -355,21 +355,6 @@ class RatTrial(Trial):
             (0.000364591)*(mass)*(foot_length/1000)**2
         )
 
-    def auto_identify_events(self):
-        # Automatically identify events in a rat walk trial
-        if self.trial_type != RatTrialType.WALK:
-            raise ValueError("Trial is not a valid walk trial")
-        # Correlate marker positions with force plate data to identify events
-        
-    def autocorrelate_forceplates(self):
-        # Automatically correlate force plates with left and right feet
-        if self.trial_type != RatTrialType.WALK:
-            raise ValueError("Trial is not a valid walk trial")
-        # Use the first frame of each foot strike to determine which force plate corresponds to which foot
-        # This will be done by checking the marker positions at the time of the event
-        # and matching them with the force plate data
-        pass
-
     def scale_opensim_model(self,                             
                             unscaled_model_path: str, 
                             marker_set_path: str, 
