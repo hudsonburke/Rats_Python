@@ -57,5 +57,24 @@ def scandir_regex(directory, pattern):
             elif entry.is_dir():
                 yield from scandir_regex(entry.path, pattern)
 
-
-                
+import numpy as np
+def calculate_cop(force: np.ndarray, moment: np.ndarray, z_offset: float) -> tuple[np.ndarray, np.ndarray]:
+    """
+    Calculate the center of pressure (COP) from force and moment data.
+    See Winter Biomechanics 4th edition, page 87.
+    Args:
+        force (numpy.ndarray): The force data.
+        moment (numpy.ndarray): The moment data.
+        z_offset (float): The offset in the z-direction.
+        
+    Returns:
+        tuple[numpy.ndarray, numpy.ndarray]: The calculated COP data and free moment data.
+    """
+    cop = np.zeros((force.shape[0], 3))
+    cop[:, 0] = (z_offset * force[:, 0] - moment[:, 1]) / force[:, 2]
+    cop[:, 1] = (z_offset * force[:, 1] + moment[:, 0]) / force[:, 2]
+    cop[:, 2] = z_offset
+    
+    free_moment = np.zeros_like(moment)
+    free_moment[:, 2] = moment[:, 2] + force[:, 0] * cop[:, 1] - force[:, 1] * cop[:, 0]
+    return (cop, free_moment)

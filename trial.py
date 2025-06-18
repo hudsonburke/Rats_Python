@@ -14,6 +14,17 @@ import opensim as osim
 # This means _T can be Trial or any subclass of Trial.
 _T = TypeVar("_T", bound="Trial") # TODO: Replace with 3.12+ Generic types
 
+# Inspiration from https://medium.com/the-pythonworld/never-use-none-for-missing-values-again-do-this-instead-8a92e20b6954
+class Sentinel:
+    def __init__(self, name: str):
+        self.name = name
+    def __repr__(self):
+        return f"<{self.name}>"
+
+MISSING = Sentinel("MISSING")
+MISSING_LIST = [] 
+UNSET = Sentinel("UNSET") 
+
 class Event(BaseModel): 
     """
     Times will default to being stored in seconds.
@@ -151,8 +162,6 @@ class ForcePlate(Analog):
 class Analogs(TimeSeriesGroup):
     # Analogs store different channels each of which could have different units
     channels: dict[str, Analog]
-
-
 
 class OpenSimOutput(str, Enum):
     """
@@ -359,7 +368,7 @@ class Trial(BaseModel):
         analog_units = cls._get_c3d_param(c3d_object, 'ANALOG', 'UNITS', default=[])    
         analog_descriptions = cls._get_c3d_param(c3d_object, 'ANALOG', 'DESCRIPTIONS', default=[])    
         analog_labels = cls._get_c3d_param(c3d_object, 'ANALOG', 'LABELS', default=[])
-        # if ezc3d doesn't handle it, will need to deal with GAIN, SCALE, OFFSET
+        # TODO: if ezc3d doesn't handle it, will need to deal with GAIN, SCALE, OFFSET
         
         for i, label in enumerate(analog_labels):
             channels[label] = Analog(
@@ -426,148 +435,6 @@ class Trial(BaseModel):
         
         """ 
         raise NotImplementedError("Vicon Nexus API integration is not implemented yet.")
-        try:
-            from viconnexusapi import ViconNexus
-            vicon = ViconNexus.ViconNexus()
-        except ImportError:
-            raise ImportError("Vicon Nexus API is not installed. Please install it to use this method.")
-
-        names = vicon.GetSubjectNames()
-        if not names or len(names) == 0:
-            raise ValueError("No subjects found in Vicon Nexus.")
-        elif len(names) > 1:
-            logger.warning(f"Multiple subjects found: {names}. Using first subject: {names[0]}")
-    
-        subject_name = names[0]
-        trial_path, trial_name = vicon.GetTrialName()
-        session_name = trial_path.split('/')[-1] if trial_path else "Unknown"
-        
-        # Parameters
-        parameters = {}
-        param_names = vicon.GetSubjectParamNames(subject_name)
-        for param_name in param_names:
-            try:
-                param_value, param_unit = vicon.GetSubjectParamDetails(subject_name, param_name)
-                parameters[param_name] = Parameter(
-                    value=param_value,
-                    unit=param_unit,
-                    description=None
-                )
-            except Exception as e:
-                logger.warning(f"Failed to get parameter {param_name}: {e}")
-    
-        # Analysis parameters
-        analysis_outputs = vicon.GetAnalysisParamNames(subject_name)
-        for analysis_output in analysis_outputs:
-            try:
-                value, unit, default, required = vicon.GetAnalysisParamDetails(subject_name, analysis_output)
-                parameters[analysis_output] = Parameter(
-                    value=value,
-                    unit=unit,
-                    description=None
-                )
-            except Exception as e:
-                logger.warning(f"Failed to get analysis parameter {analysis_output}: {e}")
-
-        # Events
-        total_frames = vicon.GetFrameCount()
-        contexts = ['Left', 'Right', 'General']
-        labels = ['Foot Strike', 'Foot Off', 'General']
-        trial_events = []
-        
-        for context in contexts:
-            for label in labels:
-                try:
-                    frames = vicon.GetEvents(subject_name, context, label)
-                    for frame in frames:
-                        trial_events.append(Event(
-                            label=label,
-                            context=context,
-                            frame=frame
-                        ))
-                except Exception as e:
-                    logger.debug(f"No events found for {context} {label}: {e}")
-    
-        # Markers/Points - Fix the coordinate structure
-        marker_names = vicon.GetMarkerNames(subject_name)
-        all_frames = range(total_frames)
-        marker_data = xr.DataArray(
-            data=[vicon.GetTrajectory(subject_name, marker_name) for marker_name in marker_names if vicon.HasTrajectory(subject_name, marker_name)],
-            dims=['markers', 'x', 'y', 'z', 'exists'],
-            coords={
-                'markers': marker_names,
-                'x': all_frames,
-                'y': all_frames,
-                'z': all_frames,
-                'exists': [True, False]
-            }
-        )
-        # Include Model Outputs
-        model_outputs = vicon.GetModelOutputNames(subject_name)
-        for model_output in model_outputs:
-            model_output_data, exists = vicon.GetModelOutput(subject_name, model_output)
-            group, components, types = vicon.GetModelOutputDetails(subject_name, model_output)
-
-        
-        ## Analog Devices
-        analog_devices = vicon.GetDeviceIDs()
-        analogs = []
-        for device_id in analog_devices:
-            # device_type will be a string like 'ForcePlate', 'EyeTracker', 'Other'
-            device_name, device_type, rate, deviceOutputIDs, forceplate, eyetracker = vicon.GetDeviceDetails(device_id)
-            for output_id in deviceOutputIDs:
-                output_name, output_type, output_unit, ready, channelNames, channelIDs = vicon.GetDeviceOutputDetails(device_id, output_id)
-                for channel_id in channelIDs:
-                    data, ready, rate = vicon.GetDeviceChannel(device_id, output_id, channel_id)
-                    channel_data = 0
-            match device_type:
-                case 'ForcePlate':
-                    if not forceplate:
-                        logger.warning(f"Force plate data for device {device_name} is not available.")
-                        continue
-                    # Handle force plate data
-                    analogs.append(ForcePlate(
-                        name=device_name,
-                        rate=rate,
-                        data=xr.DataArray(
-                            data=vicon.GetForcePlateData(device_id),
-                            dims=['force_plate', 'frames']
-                        ),
-                        context=forceplate.Context,
-                        local_r=forceplate.LocalR,
-                        local_t=forceplate.LocalT,
-                        world_r=forceplate.WorldR,
-                        world_t=forceplate.WorldT,
-                        lower_bounds=forceplate.LowerBounds,
-                        upper_bounds=forceplate.UpperBounds
-                    ))
-                case 'EyeTracker':
-                    # Handle eye tracker data
-                    pass
-                case _:
-                    # Handle other types of devices
-                    analogs.append(Analog(
-                        name=device_name,
-                        rate=rate,
-                        data=xr.DataArray(
-                            data=vicon.GetDeviceData(device_id),
-                            dims=['analog', 'frames']
-                        )
-                    ))
-
-        return cls(
-            name=trial_name or "Unknown",
-            subject_name=subject_name,
-            session_name=session_name,
-            import_method=ImportMethod.VICON_NEXUS,
-            parameters=parameters,
-            total_frames=total_frames,
-            region_of_interest=getattr(vicon, 'GetRegionOfInterest', None),
-            events=trial_events,
-            point_rate=vicon.GetPointRate(), #TODO
-            points=marker_data,
-            analogs=analogs
-        )
 
     def check_point_gaps(self, 
             marker_names : list[str] | None = None, 
@@ -645,6 +512,8 @@ class Trial(BaseModel):
             full_frames &= marker_full_frames
         return sorted(full_frames)
     
+    # TODO Refactor out opensim tools to own submodule? Trial should be agnostic of opensim model
+    
     def run_opensim_ik(self, 
                         model_path: str, 
                         trc_path: str | None = None,
@@ -677,16 +546,32 @@ class Trial(BaseModel):
         ik_tool.run()
         self.link_file(OpenSimOutput.IK, ik_results_path)
 
-    def export_force_platforms(self, left_force_plate: str, right_force_plate: str):
+    def export_force_platforms(self, 
+                               filepath: str, 
+                               force_platforms: list[ForcePlate],
+        ):
         """
-        Map force plate data to OpenSim model.
+        Export force plate metadata to OpenSim ExternalLoads .xml file and the data to a .sto file.
         """
-        # Get the force plate data
-        left_data = self.get_force_plate_data(left_force_plate)
-        right_data = self.get_force_plate_data(right_force_plate)
-
-        # Map the force plate data to the OpenSim model
-        self.map_force_plate_data(left_data, right_data)
+        ext_loads = osim.ExternalLoads()
+        ext_loads.setDataFileName(f"{self.name}_external_loads.sto")
+        
+        for fp in force_platforms:
+            ext_force = osim.ExternalForce()
+            ext_force.setName('')
+            ext_force.setAppliedToBodyName('')
+            
+            ext_force.setForceExpressedInBodyName('')
+            ext_force.setForceIdentifier('')
+            
+            ext_force.setPointExpressedInBodyName('')
+            ext_force.setPointIdentifier('')
+            
+            ext_force.setTorqueIdentifier('')
+            
+            ext_force.set_data_source_name('') # relative 
+            
+            ext_loads.cloneAndAppend(ext_force)
 
     def run_opensim_id(self, 
                         model_path: str, 
@@ -703,10 +588,14 @@ class Trial(BaseModel):
         model = osim.Model(os.path.abspath(model_path))
         id_tool.setModel(model)
         
-        if ik_results_path is None:
-            ik_results_name = f"{self.name}_ik.mot"
-            ik_results_path = os.path.join(output_dir, ik_results_name)
+        ik_results_path = ik_results_path or self.get_linked_file('ik_results')
         id_tool.setCoordinatesFileName(ik_results_path)
+        
+        
+        # TODO: Maintain relative paths for IK Setup files
+        #   - Set paths relative to the trial directory?
+        #   - Could always set working directory to the trial directory
+        #   - OR print with relative paths and then set the tool to use absolute paths (see MATLAB toolbox)
         
         id_results_name = f"{self.name}_id.mot"
         id_results_path = os.path.join(output_dir, id_results_name)
