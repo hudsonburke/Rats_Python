@@ -1,12 +1,10 @@
 import ezc3d
-from pydantic import BaseModel, model_validator, ConfigDict
+from pydantic import BaseModel, model_validator, field_validator
 from enum import Enum
-from abc import ABC, abstractmethod 
-from typing import Any, Annotated, Type, TypeVar 
+from typing import Any, Annotated, Type, TypeVar
 import numpy as np
 from loguru import logger
 import polars as pl
-import patito as pt
 import os
 import opensim as osim
 
@@ -86,82 +84,197 @@ class TimeSeriesGroup(BaseModel):
         if frame < self.first_frame or frame > self.last_frame:
             raise ValueError("Frame out of bounds")
         return frame / self.rate
-
-class TimeSeries(BaseModel, ABC):
-    model_config = ConfigDict(arbitrary_types_allowed=True)
-
-    description: str | None = None
-    data: pl.DataFrame 
-
-    @property
-    @abstractmethod
-    def data_schema(self) -> type[pt.Model]:
-        """Abstract property for the Patito schema of the channel\'s DataFrame."""
-        raise NotImplementedError
     
-    @model_validator(mode='after')
-    def validate_dataframe_schema(self):
-        if self.data is not None:
-            # Validate the DataFrame against the schema provided by data_schema
-            self.data_schema.validate(self.data)
-        return self
+    @property 
+    def time(self) -> np.ndarray:
+        """
+        Return a time vector for the time series group.
+        """
+        return np.arange(self.first_frame, self.last_frame + 1) / self.rate
 
-class MarkerTrajectory(TimeSeries):
-    class _MarkerDataFrameSchema(pt.Model):
-        x: float
-        y: float
-        z: float
-        # Pulling from c3d, you get residuals, but Vicon Nexus just gives you 'exists'
-        residual: float | None = None 
-        exists: bool | None = None
+class MarkerTrajectory(BaseModel):
+    """
+    A marker trajectory represented as a Polars DataFrame with columns:
+    x, y, z, residual, description
+    """
+    class Config:
+        arbitrary_types_allowed = True
+    data: pl.DataFrame
+    description: str = ''
+    
+    def __init__(self, **kwargs):
+        if 'data' in kwargs:
+            data = kwargs['data']
+        else:
+            data = pl.DataFrame({
+                'x': kwargs.get('x', []),
+                'y': kwargs.get('y', []),
+                'z': kwargs.get('z', []),
+                'residual': kwargs.get('residual', []),
+            })
+        description = kwargs.get('description', '')
+        super().__init__(data=data, description=description)
+            
+    
+    @field_validator('data')
+    @classmethod
+    def validate_dataframe_structure(cls, v: pl.DataFrame) -> pl.DataFrame:
+        """Validate that the DataFrame has the required columns"""
+        required_columns = ['x', 'y', 'z', 'residual']
         
-    @property
-    def data_schema(self) -> type[pt.Model]:
-        return self._MarkerDataFrameSchema
+        if not all(col in v.columns for col in required_columns):
+            missing = [col for col in required_columns if col not in v.columns]
+            raise ValueError(f"Missing required columns: {missing}")
+        
+        # Ensure correct data types
+        try:
+            v = v.with_columns([
+                pl.col('x').cast(pl.Float64),
+                pl.col('y').cast(pl.Float64),
+                pl.col('z').cast(pl.Float64),
+                pl.col('residual').cast(pl.Float64),
+            ])
+        except Exception as e:
+            raise ValueError(f"Error casting columns to correct types: {e}")
+        return v
     
     @property
     def coords(self) -> np.ndarray:
-        return self.data.select(['x', 'y', 'z']).to_numpy() if self.data is not None else np.array([])
-
+        """Return coordinates as numpy array (n_frames, 3)"""
+        return self.data.select(['x', 'y', 'z']).to_numpy()
+    
+    def __len__(self) -> int:
+        return len(self.data)
+    
+    def rename_columns(self, prefix: str) -> pl.DataFrame:
+        """Rename columns with a prefix for concatenation"""
+        return self.data.rename({
+            'x': f'{prefix}_x',
+            'y': f'{prefix}_y', 
+            'z': f'{prefix}_z',
+            'residual': f'{prefix}_residual',
+        })
+    
 class Points(TimeSeriesGroup):
-    units: str # All points must have the same units
+    units: str
     trajectories: dict[str, MarkerTrajectory]
     
-    def get_marker_coords(self, marker_name: str, frame: int | None = None) -> np.ndarray | None:
+    @model_validator(mode='after')
+    def validate_trajectory_lengths(self) -> 'Points':
+        """Ensure all trajectories have the same length matching total_frames"""
+        expected_length = self.total_frames
+        
+        for marker_name, trajectory in self.trajectories.items():
+            if len(trajectory) != expected_length:
+                raise ValueError(
+                    f"Marker '{marker_name}' has {len(trajectory)} frames, "
+                    f"expected {expected_length} frames"
+                )
+        return self
+    
+    def to_df(self) -> pl.DataFrame:
+        """
+        Convert the Points object to a Polars DataFrame.
+        Each marker's coordinates will be separate columns (marker_x, marker_y, marker_z, marker_residual).
+        """
+        if not self.trajectories:
+            return pl.DataFrame()
+        
+        dfs = []
+        for name, trajectory in self.trajectories.items():
+            marker_df = trajectory.rename_columns(name)
+            dfs.append(marker_df)
+        
+        # Add time column
+        time_df = pl.DataFrame({
+            'time': self.time
+        })
+        
+        # Concatenate horizontally
+        all_dfs = [time_df] + dfs
+        return pl.concat(all_dfs, how='horizontal')
+    
+    def get_marker_coords(self, marker_name: str, frame: int | None = None) -> np.ndarray:
+        """Get marker coordinates, optionally at a specific frame"""
         if marker_name not in self.trajectories:
-            return None
+            raise ValueError(f"Marker '{marker_name}' not found in trajectories")        
         marker = self.trajectories[marker_name]
+        
         if frame is None:
             return marker.coords
-        if frame < self.first_frame or frame > self.last_frame:
-            return None
-        # Get the row corresponding to the frame
-        row_index = frame - self.first_frame
-        if row_index < 0 or row_index >= len(marker.data):
-            return None
-        return marker.coords[row_index]
-    
-class Analog(TimeSeries):
-    units: str
-    class _AnalogDataFrameSchema(pt.Model):
-        values: float
         
-    @property
-    def data_schema(self) -> type[pt.Model]:
-        return self._AnalogDataFrameSchema
+        if frame < self.first_frame or frame > self.last_frame:
+            raise IndexError(f"Frame {frame} out of bounds")
 
-class ForcePlate(Analog):
-    context: str
-    local_r: Annotated[np.ndarray, '3x3 local rotation matrix'] = np.eye(3) #TODO: Maybe use numpydantic
-    local_t: Annotated[np.ndarray, '3x1 local translation vector'] = np.zeros(3)
-    world_r: Annotated[np.ndarray, '3x3 world rotation matrix'] = np.eye(3)
-    world_t: Annotated[np.ndarray, '3x1 world translation vector'] = np.zeros(3)
-    lower_bounds: Annotated[np.ndarray, '3x1 lower bounds'] = np.array([-np.inf, -np.inf, -np.inf])
-    upper_bounds: Annotated[np.ndarray, '3x1 upper bounds'] = np.array([np.inf, np.inf, np.inf])
+        # Convert absolute frame to relative index
+        frame_idx = frame - self.first_frame
+        return marker.coords[frame_idx]
+    
+    def add_marker(self, name: str, x: list, y: list, z: list, 
+                   residual: list | None = None, description: str = ''):
+        """Add a new marker trajectory"""
+        n_frames = self.total_frames
+        
+        # Validate lengths
+        if len(x) != n_frames or len(y) != n_frames or len(z) != n_frames:
+            raise ValueError(f"Coordinate arrays must have length {n_frames}")
+        
+        if residual is None:
+            residual = [0.0] * n_frames
+            
+        trajectory = MarkerTrajectory(
+            data = pl.DataFrame({
+                'x': x,
+                'y': y,
+                'z': z,
+                'residual': residual
+            }),
+            description=description
+        )
+        self.trajectories[name] = trajectory
+    
+class AnalogChannel(BaseModel):
+    """Each analog channel can have different units"""
+    units: str
+    data: list[float]
+    description: str = ''
+    
+# class ForcePlatform(BaseModel):
+#     corners: Annotated[np.ndarray, '4x3 array of corner coordinates'] = np.zeros((4, 3)) # 4 corners in 3D space
+#     origin: Annotated[np.ndarray, '3x1 origin coordinate'] = np.zeros(3) # Origin of the force platform
+#     type: int 
+#     channels: dict[str, AnalogChannel] = {} # Map of channel names to AnalogChannel objects     
+    
+# class NexusForcePlate(Analog):
+#     context: str
+#     local_r: Annotated[np.ndarray, '3x3 local rotation matrix'] = np.eye(3) #TODO: Maybe use numpydantic
+#     local_t: Annotated[np.ndarray, '3x1 local translation vector'] = np.zeros(3)
+#     world_r: Annotated[np.ndarray, '3x3 world rotation matrix'] = np.eye(3)
+#     world_t: Annotated[np.ndarray, '3x1 world translation vector'] = np.zeros(3)
+#     lower_bounds: Annotated[np.ndarray, '3x1 lower bounds'] = np.array([-np.inf, -np.inf, -np.inf])
+#     upper_bounds: Annotated[np.ndarray, '3x1 upper bounds'] = np.array([np.inf, np.inf, np.inf])
 
 class Analogs(TimeSeriesGroup):
     # Analogs store different channels each of which could have different units
-    channels: dict[str, Analog]
+    channels: dict[str, AnalogChannel]
+    
+    def to_df(self) -> pl.DataFrame:
+        """
+        Convert the Analogs object to a Polars DataFrame.
+        Each channel will be a column in the DataFrame.
+        WARNING: This decouples the channels from their original units.
+        """
+        if not self.channels:
+            return pl.DataFrame()
+        dfs = []
+        for name, channel in self.channels.items():
+            channel_df = pl.DataFrame({
+                name: channel.data
+            })
+            dfs.append(channel_df)
+        
+        # Concatenate horizontally
+        return pl.concat(dfs, how='horizontal')
 
 class OpenSimOutput(str, Enum):
     """
@@ -223,13 +336,30 @@ class Trial(BaseModel):
         """
         return self.linked_files.get(file_key, None)
     
+    def to_sto(self,
+               filepath: str,
+               ):
+        """
+        Export the analog data to OpenSim .sto file format.
+        """
+        import opensim as osim
+        table = osim.TimeSeriesTable()
+        table.addTableMetaDataString("nColumns", str(len(self.analogs.channels)))
+        table.addTableMetaDataString("nRows", str(self.analogs.last_frame - self.analogs.first_frame + 1))
+        table.appendColumn("time", self.analogs.time)
+        for channel_name, channel_data in self.analogs.channels.items():
+            table.appendColumn(channel_name, channel_data.data)
+        adapter = osim.STOFileAdapter()
+        adapter.write(table, filepath)
+        self.link_file('sto', filepath)
+
     def to_trc(self, 
                filepath: str,
                output_units: str | None = None,
                rotation: np.ndarray = np.eye(3)
                ):
         """
-        Export the trial data to TRC file format used by OpenSim
+        Export the marker data to TRC file format used by OpenSim
         """  
         import opensim as osim
         table = osim.TimeSeriesTableVec3()
@@ -238,7 +368,7 @@ class Trial(BaseModel):
         conversion_factor = 1.0
         if output_units is not None and self.points.units != output_units:
             logger.info(f"Output units {output_units} do not match points units {self.points.units}. Converting coordinates.")
-            # Convert coordinates to the desired output units
+            # TODO: Convert coordinates to the desired output units
             
         table.addTableMetaDataString("Units", self.points.units)
         table.addTableMetaDataString("DataRate", str(self.points.rate))
@@ -343,22 +473,24 @@ class Trial(BaseModel):
         residuals = c3d_data['meta_points']['residuals'] # 1xNxM
         point_labels = cls._get_c3d_param(c3d_object, 'POINT', 'LABELS', default=[])
         point_descriptions = cls._get_c3d_param(c3d_object, 'POINT', 'DESCRIPTIONS', default=[])
-        point_scale = cls._get_c3d_param(c3d_object, 'POINT', 'SCALE', default=1)
         
         # if point_scale != 1: # TODO: Figure out what to do with this
         #     logger.warning(f"Point scale {point_scale} is not 1. Scaling point data accordingly.")
         #     point_data = point_data * point_scale
         for i, label in enumerate(point_labels):
-            trajectories[label] = MarkerTrajectory(
-                data=pl.DataFrame({
-                'x': point_data[0, i, :],
-                'y': point_data[1, i, :],
-                'z': point_data[2, i, :],
-                'residual': residuals[0, i, :] if residuals is not None else None,
-                'exists': point_data[3, i, :] == 1
-                }),
-                description=point_descriptions[i] or None
+            # Create MarkerTrajectory from the data
+            n_frames = point_data.shape[2]
+            descriptions = [point_descriptions[i] if i < len(point_descriptions) else ''] * n_frames
+            
+            trajectory = MarkerTrajectory(
+                x=point_data[0, i, :].tolist(),
+                y=point_data[1, i, :].tolist(), 
+                z=point_data[2, i, :].tolist(),
+                residual=residuals[0, i, :].tolist(),
+                description=descriptions[i]
             )
+            trajectories[label] = trajectory
+    
         # Analogs
         channels = {}
         analog_rate_param = cls._get_c3d_param(c3d_object, 'ANALOG', 'RATE', default=None)
@@ -371,12 +503,10 @@ class Trial(BaseModel):
         # TODO: if ezc3d doesn't handle it, will need to deal with GAIN, SCALE, OFFSET
         
         for i, label in enumerate(analog_labels):
-            channels[label] = Analog(
-                data=pl.DataFrame({
-                    'values': analog_data[0, i, :]
-                }),
-                units=analog_units[i] or 'unknown',
-                description=analog_descriptions[i] or None
+            channels[label] = AnalogChannel(
+                data=analog_data[0, i, :].tolist(),  # Convert to list for compatibility
+                units=analog_units[i] or '',
+                description=analog_descriptions[i] or ''
             )    
         # Force platforms - # TODO
         return cls(
@@ -387,11 +517,11 @@ class Trial(BaseModel):
             import_method=ImportMethod.C3D,
             parameters=parameters,
             events=events,
-            points = Points(
+            points=Points(
                 first_frame=points_first_frame,
                 last_frame=points_last_frame,
                 rate=points_rate,
-                units=c3d_parameters.get('POINTS', {}).get('UNITS', {}).get('value', 'mm'),
+                units=cls._get_c3d_param(c3d_object, 'POINT', 'UNITS', default=['mm'])[0],
                 trajectories=trajectories
             ),
             analogs=Analogs(
@@ -403,7 +533,7 @@ class Trial(BaseModel):
         )
            
     @classmethod
-    def from_c3d_file(cls: Type[_T], file_path: str) -> _T: # MODIFIED: Returns an instance of _T
+    def from_c3d_file(cls: Type[_T], file_path: str) -> _T:
         """
         Create a Trial instance from a C3D file.
         """
@@ -548,7 +678,7 @@ class Trial(BaseModel):
 
     def export_force_platforms(self, 
                                filepath: str, 
-                               force_platforms: list[ForcePlate],
+                               force_platforms: list[AnalogChannel],
         ):
         """
         Export force plate metadata to OpenSim ExternalLoads .xml file and the data to a .sto file.

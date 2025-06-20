@@ -271,6 +271,7 @@ class RatTrial(Trial):
                     percentages[side].append(percentage)
         return percentages
             
+    # Body mass and inertia properties
     def thigh_mass(self):
         mass = self.parameters["Mass"]
         return (7.3313*mass+3.6883)/1000
