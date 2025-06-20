@@ -238,6 +238,14 @@ class AnalogChannel(BaseModel):
     units: str
     data: list[float]
     description: str = ''
+    scale: float = 1.0
+    offset: float = 0.0
+    
+class EZC3DForcePlatform(BaseModel):
+    unit_force: str = 'N'  # Default force unit
+    unit_moment: str = 'Nm'  # Default moment unit
+    unit_position: str = 'm'  # Default position unit
+    
     
 # class ForcePlatform(BaseModel):
 #     corners: Annotated[np.ndarray, '4x3 array of corner coordinates'] = np.zeros((4, 3)) # 4 corners in 3D space
@@ -257,6 +265,7 @@ class AnalogChannel(BaseModel):
 class Analogs(TimeSeriesGroup):
     # Analogs store different channels each of which could have different units
     channels: dict[str, AnalogChannel]
+    gen_scale: float = 1.0 # General scale factor for all channels
     
     def to_df(self) -> pl.DataFrame:
         """
@@ -294,17 +303,16 @@ class Trial(BaseModel):
     name: str 
     session_name: str | None
     subject_names: list[str] | str | None 
-    classification: str | None = None
+    classification: str = ''
     trial_type: str | None = None
     import_method: ImportMethod
     linked_files: dict[str, str] = {} # Map of associated files, e.g. C3D file path, etc.
-    
     parameters: dict[str, Any] = {}
 
     events: list[Event] # Should be in ascending order by frame or time
 
     points: Points
-    point_gaps: dict[str, list[tuple[int, int]]] | None = None
+    point_gaps: dict[str, list[tuple[int, int]]] = {}
     
     analogs: Analogs
     
@@ -346,9 +354,14 @@ class Trial(BaseModel):
         table = osim.TimeSeriesTable()
         table.addTableMetaDataString("nColumns", str(len(self.analogs.channels)))
         table.addTableMetaDataString("nRows", str(self.analogs.last_frame - self.analogs.first_frame + 1))
-        table.appendColumn("time", self.analogs.time)
-        for channel_name, channel_data in self.analogs.channels.items():
-            table.appendColumn(channel_name, channel_data.data)
+        table.setColumnLabels(list(self.analogs.channels.keys()))
+        time_col = self.analogs.time
+        analogs_df = self.analogs.to_df()
+        analogs_df = analogs_df.with_columns(pl.Series('time', time_col))
+        for row in analogs_df.iter_rows(named=True):
+            time = row['time']
+            values = [row[col] for col in analogs_df.columns if col != 'time']
+            table.appendRow(time, osim.RowVector(values))
         adapter = osim.STOFileAdapter()
         adapter.write(table, filepath)
         self.link_file('sto', filepath)
@@ -428,6 +441,8 @@ class Trial(BaseModel):
         camera_rate = cls._get_c3d_param(c3d_object, 'TRIAL', 'CAMERA_RATE', default=None)
         if camera_rate != points_rate:
             logger.warning(f"Camera rate {camera_rate} does not match points rate {points_rate} in header")
+            
+        subject_names = cls._get_c3d_param(c3d_object, 'SUBJECTS', 'NAMES', default=[])
 
         # FORCE_PLATFORM - # TODO
         # EVENT_CONTEXT - not currently using
@@ -473,21 +488,20 @@ class Trial(BaseModel):
         residuals = c3d_data['meta_points']['residuals'] # 1xNxM
         point_labels = cls._get_c3d_param(c3d_object, 'POINT', 'LABELS', default=[])
         point_descriptions = cls._get_c3d_param(c3d_object, 'POINT', 'DESCRIPTIONS', default=[])
+        point_units = cls._get_c3d_param(c3d_object, 'POINT', 'UNITS', default=['mm'])[0]
         
         # if point_scale != 1: # TODO: Figure out what to do with this
         #     logger.warning(f"Point scale {point_scale} is not 1. Scaling point data accordingly.")
         #     point_data = point_data * point_scale
         for i, label in enumerate(point_labels):
             # Create MarkerTrajectory from the data
-            n_frames = point_data.shape[2]
-            descriptions = [point_descriptions[i] if i < len(point_descriptions) else ''] * n_frames
-            
+            n_frames = point_data.shape[2]            
             trajectory = MarkerTrajectory(
                 x=point_data[0, i, :].tolist(),
                 y=point_data[1, i, :].tolist(), 
                 z=point_data[2, i, :].tolist(),
                 residual=residuals[0, i, :].tolist(),
-                description=descriptions[i]
+                description=point_descriptions[i]
             )
             trajectories[label] = trajectory
     
@@ -500,19 +514,22 @@ class Trial(BaseModel):
         analog_units = cls._get_c3d_param(c3d_object, 'ANALOG', 'UNITS', default=[])    
         analog_descriptions = cls._get_c3d_param(c3d_object, 'ANALOG', 'DESCRIPTIONS', default=[])    
         analog_labels = cls._get_c3d_param(c3d_object, 'ANALOG', 'LABELS', default=[])
-        # TODO: if ezc3d doesn't handle it, will need to deal with GAIN, SCALE, OFFSET
+        analog_offsets = cls._get_c3d_param(c3d_object, 'ANALOG', 'OFFSET', default=np.zeros(len(analog_labels)))
+        analog_scales = cls._get_c3d_param(c3d_object, 'ANALOG', 'SCALE', default=np.ones(len(analog_labels)))
+        analog_gen_scale = cls._get_c3d_param(c3d_object, 'ANALOG', 'GEN_SCALE', default=[1.0])[0]
         
         for i, label in enumerate(analog_labels):
             channels[label] = AnalogChannel(
                 data=analog_data[0, i, :].tolist(),  # Convert to list for compatibility
                 units=analog_units[i] or '',
-                description=analog_descriptions[i] or ''
+                description=analog_descriptions[i] or '',
+                scale=analog_scales[i],
+                offset=analog_offsets[i]
             )    
-        # Force platforms - # TODO
         return cls(
             name=trial_name,
             session_name=session_name,
-            subject_names=cls._get_c3d_param(c3d_object, 'SUBJECTS', 'NAMES', default=[]),
+            subject_names=subject_names,
             classification=classification,
             import_method=ImportMethod.C3D,
             parameters=parameters,
@@ -521,14 +538,15 @@ class Trial(BaseModel):
                 first_frame=points_first_frame,
                 last_frame=points_last_frame,
                 rate=points_rate,
-                units=cls._get_c3d_param(c3d_object, 'POINT', 'UNITS', default=['mm'])[0],
+                units=point_units,
                 trajectories=trajectories
             ),
             analogs=Analogs(
                 first_frame=analogs_first_frame,
                 last_frame=analogs_last_frame,
                 rate=analogs_rate,
-                channels=channels
+                channels=channels,
+                gen_scale=analog_gen_scale,
             )
         )
            

@@ -78,3 +78,92 @@ def calculate_cop(force: np.ndarray, moment: np.ndarray, z_offset: float) -> tup
     free_moment = np.zeros_like(moment)
     free_moment[:, 2] = moment[:, 2] + force[:, 0] * cop[:, 1] - force[:, 1] * cop[:, 0]
     return (cop, free_moment)
+
+import numpy as np
+import polars as pl
+def read_mot(file_path: str) -> tuple[pl.DataFrame, dict]:
+    """
+    Read a .mot file (OpenSim motion file format)
+    https://opensimconfluence.atlassian.net/wiki/spaces/OpenSim/pages/53089415/Motion+.mot+Files
+    
+    Args:
+        file_path (str): The path to the motion file.
+        
+    Returns:
+        tuple[np.ndarray, dict]: A tuple containing the data array and metadata dictionary
+    """
+ 
+    metadata = {}
+    
+    with open(file_path, 'r') as fid:
+        # First line is the name
+        metadata['name'] = fid.readline().strip()
+        
+        # Loop through metadata
+        while True:
+            line = fid.readline()
+            if not line:  # EOF
+                break
+                
+            line = line.strip()
+            
+            # Check for end of header
+            if line == 'endheader':
+                break
+            elif not line:  # Empty line indicates comments section
+                metadata['comments'] = []
+                # Read comments until next empty line or endheader
+                while True:
+                    comment_line = fid.readline()
+                    if not comment_line:  # EOF
+                        break
+                    comment_line = comment_line.strip()
+                    if not comment_line or comment_line == 'endheader':
+                        if comment_line == 'endheader':
+                            break
+                        break
+                    metadata['comments'].append(comment_line)
+                
+                if comment_line == 'endheader':
+                    break
+            else:
+                # Parse metadata line (key=value format)
+                parts = line.split('=', 1)
+                if len(parts) < 2:
+                    raise ValueError(f"Invalid metadata line: {line}")
+                
+                key = parts[0].strip()
+                value_str = parts[1].strip()
+                
+                # Try to convert to number, otherwise keep as string
+                try:
+                    value = float(value_str)
+                    # Convert to int if it's a whole number
+                    if value.is_integer():
+                        value = int(value)
+                except ValueError:
+                    value = value_str
+                
+                metadata[key] = value
+        
+        # Column labels are on the next line after 'endheader'
+        labels_line = fid.readline().strip()
+        metadata['columnLabels'] = labels_line.split('\t')
+        
+        # Read the rest of the file as data
+        data_lines = []
+        for line in fid:
+            line = line.strip()
+            if line:  # Skip empty lines
+                row = [float(x) for x in line.split()]
+                data_lines.append(row)
+        
+        # Convert to numpy array
+        if data_lines:
+            data = np.array(data_lines)
+        else:
+            data = np.array([]).reshape(0, len(metadata['columnLabels']))
+    
+    df = pl.DataFrame(data, schema=metadata['columnLabels'])
+    
+    return df, metadata
