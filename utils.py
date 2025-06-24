@@ -187,9 +187,11 @@ def sto_to_df(file_path: str) -> tuple[pl.DataFrame, dict[str,str]]:
             if key and value:
                 file_metadata[key.lower()] = value.strip()
             line = f.readline()  # Read the next line after the key-value pair
+            lines_to_skip += 1
         elif not line.startswith('endheader'):
             file_metadata['name'] = line.strip()
             line = f.readline() # Second line should start the key value pairs
+            lines_to_skip += 1
         else: # If the first line is 'endheader', do not enter the loop
             file_metadata['name'] = 'Unnamed File'
         while line and not line.startswith('endheader'):
@@ -208,12 +210,31 @@ def sto_to_df(file_path: str) -> tuple[pl.DataFrame, dict[str,str]]:
     df = df.with_columns([pl.col(col).str.strip_chars().cast(pl.Float64) for col in df.columns])
     return df, file_metadata
 
-def parse_enf_file(file_path: str) -> dict:
+def parse_enf_file(file_path: str, encoding: str = 'utf-8') -> dict[str, str]:
+    """
+    Parse an .enf file and return key-value pairs.
+    
+    Args:
+        file_path: Path to the .enf file
+        encoding: File encoding (default: utf-8)
+        
+    Returns:
+        Dictionary with lowercase keys and their values
+    """
     data = {}
-    with open(file_path, 'r', errors='ignore') as file:
-        for line in file:
-            if '=' in line:
-                key, value = line.strip().split('=', 1)
-                if key and value:
-                    data[key.lower()] = value  # Ensure keys are lowercase for consistency
+    try:
+        with open(file_path, 'r', encoding=encoding) as file:
+            for line in file:
+                if '=' in line:
+                    key, value = line.strip().split('=', 1)
+                    if key and value:
+                        data[key.lower()] = value  # Ensure keys are lowercase for consistency
+    except UnicodeDecodeError:
+        # Try with a different encoding if UTF-8 fails
+        with open(file_path, 'r', encoding='latin-1') as file:
+            for line in file:
+                if '=' in line:
+                    key, value = line.strip().split('=', 1)
+                    if key and value:
+                        data[key.lower()] = value
     return data

@@ -172,7 +172,7 @@ class RatTrial(Trial):
                     next_foot_strike = event
             if foot_strike and foot_off and next_foot_strike:
                 stance_swing_phases.append((foot_strike, foot_off, next_foot_strike))
-                foot_strike = None
+                foot_strike = next_foot_strike
                 foot_off = None
                 next_foot_strike = None
         return stance_swing_phases

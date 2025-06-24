@@ -151,7 +151,7 @@ class MarkerTrajectory(BaseModel):
     def __len__(self) -> int:
         return len(self.data)
     
-    def rename_columns(self, prefix: str) -> pl.DataFrame:
+    def prefix_columns(self, prefix: str) -> pl.DataFrame:
         """Rename columns with a prefix for concatenation"""
         return self.data.rename({
             'x': f'{prefix}_x',
@@ -187,7 +187,7 @@ class Points(TimeSeriesGroup):
         
         dfs = []
         for name, trajectory in self.trajectories.items():
-            marker_df = trajectory.rename_columns(name)
+            marker_df = trajectory.prefix_columns(name)
             dfs.append(marker_df)
         
         # Add time column
@@ -199,6 +199,20 @@ class Points(TimeSeriesGroup):
         all_dfs = [time_df] + dfs
         return pl.concat(all_dfs, how='horizontal')
     
+    def from_df(self, df: pl.DataFrame):
+        """
+        Populate the Points object from a Polars DataFrame.
+        The DataFrame can only have columns: time, marker_x, marker_y, marker_z, marker_residual.
+        This will overwrite existing trajectories.
+        """
+        for col in df.columns:
+            if col.startswith('marker_'):
+                marker_name = col[7:]  # Remove 'marker_' prefix
+                self.trajectories[marker_name] = MarkerTrajectory(
+                    data=df[[col, f'{col}_y', f'{col}_z', f'{col}_residual']],
+                    description=marker_name
+                )
+
     def get_marker_coords(self, marker_name: str, frame: int | None = None) -> np.ndarray:
         """Get marker coordinates, optionally at a specific frame"""
         if marker_name not in self.trajectories:
@@ -699,6 +713,8 @@ class Trial(BaseModel):
         import pickle
         with open(path, 'rb') as f:
             data = pickle.load(f)
+        if not isinstance(data, cls):
+            raise ValueError(f"Loaded data is not an instance of {cls}: {type(data)}")
         return data
 
     @classmethod
