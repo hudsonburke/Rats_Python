@@ -337,7 +337,6 @@ class EZC3DForcePlatform(BaseModel):
         """Return free moment as a numpy array (n_frames, 3)"""
         return self.data.select(['free_moment_x', 'free_moment_y', 'free_moment_z']).to_numpy()
 
-
 class Analogs(TimeSeriesGroup):
     # Analogs store different channels each of which could have different units
     channels: dict[str, AnalogChannel]
@@ -372,6 +371,8 @@ class OpenSimOutput(str, Enum):
     IK = "ik_results"
     ID_SETUP = "id_setup"
     ID = "id_results"
+    FP_MOT = "fp_mot"
+    FP_SETUP = "fp_setup"
 
 class Trial(BaseModel):
     
@@ -414,12 +415,12 @@ class Trial(BaseModel):
     def link_file(self, file_key:str, file_path:str):
         self.linked_files[file_key] = os.path.abspath(file_path)
     
-    def get_linked_file(self, file_key: str) -> str | None:
+    def get_linked_file(self, file_key: str) -> str:
         """
         Get the absolute path of an associated file by its key.
-        Returns None if the file is not associated.
+        Returns an empty string if the file is not associated.
         """
-        return self.linked_files.get(file_key, None)
+        return self.linked_files.get(file_key, '')
     
     def to_sto(self,
                filepath: str,
@@ -801,9 +802,9 @@ class Trial(BaseModel):
         ik_tool.setStartTime(start_time)
         ik_tool.setEndTime(end_time)
         
-        ik_setup_path = os.path.join(output_dir, f'{self.name}_ik_setup.xml')
-        ik_tool.printToXML(ik_setup_path)
-        self.link_file(OpenSimOutput.IK_SETUP, ik_setup_path)
+        out_ik_setup_path = os.path.join(output_dir, f'{self.name}_ik_setup.xml')
+        ik_tool.printToXML(out_ik_setup_path)
+        self.link_file(OpenSimOutput.IK_SETUP, out_ik_setup_path)
         ik_tool.run()
         self.link_file(OpenSimOutput.IK, ik_results_path)
 
@@ -845,20 +846,26 @@ class Trial(BaseModel):
         data = np.zeros((len(self.force_platforms)*9, len(time_col)))  # 3 forces, 3 moments, 3 center of pressure
         for i, fp in enumerate(self.force_platforms): 
             display_i = i + 1  # For display purposes, OpenSim uses 1-based indexing
+            fp_force_identifier = force_identifier % (display_i)
+            fp_point_identifier = point_identifier % (display_i)
+            fp_torque_identifier = torque_identifier % (display_i)
+            mot_labels.extend([fp_force_identifier + coord for coord in 'xyz'])
+            mot_labels.extend([fp_torque_identifier + coord for coord in 'xyz'])
+            mot_labels.extend([fp_point_identifier + coord for coord in 'xyz'])  # This could be precomputed, but having it next to the data makes it clear what order it should be added
+            if display_i not in applied_bodies:
+                logger.warning(f"Force platform {display_i} does not have an applied body defined. Skipping.")
+                continue
             # Create ExternalForce for each force platform        
             ext_force = osim.ExternalForce()
             ext_force.setName(f'FP{str(display_i)}')
-            ext_force.setAppliedToBodyName(applied_bodies[display_i] if display_i in applied_bodies else '')
+            ext_force.setAppliedToBodyName(applied_bodies[display_i])
 
             ext_force.setForceExpressedInBodyName(force_expressed_in_body)
-            fp_force_identifier = force_identifier % (display_i)
             ext_force.setForceIdentifier(fp_force_identifier)
 
             ext_force.setPointExpressedInBodyName(point_expressed_in_body)
-            fp_point_identifier = point_identifier % (display_i)
             ext_force.setPointIdentifier(fp_point_identifier)
 
-            fp_torque_identifier = torque_identifier % (display_i)
             ext_force.setTorqueIdentifier(fp_torque_identifier)
             
             ext_force.set_data_source_name(mot_filename) 
@@ -882,18 +889,15 @@ class Trial(BaseModel):
                 
             # Rotate the force platform data
             force = np.array(rotation @ np.array(fp.force).T).T * force_conversion_factor * -1.0 # OpenSim expects forces to be in the opposite direction
-            cop = np.array(rotation @ np.array(fp.center_of_pressure).T).T * position_conversion_factor 
             free_moment = np.array(rotation @ np.array(fp.free_moment).T).T * moment_conversion_factor * -1.0 # OpenSim expects moments to be in the opposite direction
-            mot_labels.extend([fp_force_identifier + coord for coord in 'xyz'])
-            mot_labels.extend([fp_torque_identifier + coord for coord in 'xyz'])
-            mot_labels.extend([fp_point_identifier + coord for coord in 'xyz'])  # This could be precomputed, but having it next to the data makes it clear what order it should be added
+            cop = np.array(rotation @ np.array(fp.center_of_pressure).T).T * position_conversion_factor 
+            
             data[i*9:i*9+3, :] = force.T  # 3 forces
             data[i*9+3:i*9+6, :] = free_moment.T  # 3 moments
             data[i*9+6:i*9+9, :] = cop.T  # 3 center of pressure
         for i in range(len(time_col)):
             mot_table.appendRow(time_col[i], osim.RowVector(data[:, i]))
 
-        print(f"Writing {len(mot_labels)} labels to MOT file: {mot_labels}")
         mot_table.setColumnLabels(mot_labels)
 
         for key, value in metadata.items():
@@ -907,34 +911,59 @@ class Trial(BaseModel):
             mot_table.addTableMetaDataString('nColumns', str(n_columns))
         adapter = osim.STOFileAdapter()
         adapter.write(mot_table, mot_filepath)
+        self.link_file(OpenSimOutput.FP_MOT, mot_filepath)
         ext_loads.setDataFileName(mot_filename)
         ext_loads.printToXML(external_loads_filepath)
+        self.link_file(OpenSimOutput.FP_SETUP, external_loads_filepath)
 
     def run_opensim_id(self, 
                         model_path: str, 
                         ik_results_path: str | None = None,
                         output_dir: str = '.',
-                        id_setup_path: str | None = None
+                        id_setup_path: str | None = None,
+                        filter_cutoff: float = -1.0,  # Hz - Default is no filtering
+                        external_loads_file: str | None = None,
+                        excluded_forces: list[str] | None = None
                         ):
+        # TODO: Maintain relative paths for Setup files
+        #   - Set paths relative to the trial directory?
+        #   - Could always set working directory to the trial directory
+        #   - OR print with relative paths and then set the tool to use absolute paths (see MATLAB toolbox)
         if id_setup_path is None:
             id_tool = osim.InverseDynamicsTool()
         else:
             id_tool = osim.InverseDynamicsTool(os.path.abspath(id_setup_path))
 
         id_tool.setName(self.name)
-        model = osim.Model(os.path.abspath(model_path))
-        id_tool.setModel(model)
-        
+        # model = osim.Model(os.path.abspath(model_path))
+        id_tool.setModelFileName(os.path.abspath(model_path))
+
         ik_results_path = ik_results_path or self.get_linked_file('ik_results')
+        ik_sto = osim.Storage(ik_results_path)
+        id_tool.setStartTime(ik_sto.getFirstTime())
+        id_tool.setEndTime(ik_sto.getLastTime())
         id_tool.setCoordinatesFileName(ik_results_path)
         
-        
-        # TODO: Maintain relative paths for IK Setup files
-        #   - Set paths relative to the trial directory?
-        #   - Could always set working directory to the trial directory
-        #   - OR print with relative paths and then set the tool to use absolute paths (see MATLAB toolbox)
-        
-        id_results_name = f"{self.name}_id.mot"
+        if filter_cutoff > 0:
+            id_tool.setLowpassCutoffFrequency(filter_cutoff)
+            
+        if external_loads_file is not None:
+            # Use the provided external loads file
+            id_tool.setExternalLoadsFileName(os.path.abspath(external_loads_file))
+
+        if excluded_forces is not None:
+            # Exclude specified forces from the ID analysis
+            exclude = osim.ArrayStr()
+            for force in excluded_forces:
+                exclude.append(force)
+            id_tool.setExcludedForces(exclude)
+
+        id_results_name = f"{self.name}_id.sto"
         id_results_path = os.path.join(output_dir, id_results_name)
-        id_tool.setOutputGenForceFileName(id_results_path)
+        id_tool.setOutputGenForceFileName(id_results_name)
         id_tool.setResultsDir(os.path.abspath(output_dir))
+        out_id_setup_path = os.path.join(output_dir, f'{self.name}_id_setup.xml')
+        id_tool.printToXML(out_id_setup_path)
+        self.link_file(OpenSimOutput.ID_SETUP, out_id_setup_path)
+        id_tool.run()
+        self.link_file(OpenSimOutput.ID, id_results_path)
