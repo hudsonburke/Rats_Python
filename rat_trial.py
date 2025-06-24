@@ -467,7 +467,7 @@ class RatTrial(Trial):
     #                         output_path: str | None = None
     #                         ):
     #     if self.trial_type != "Static" or not self.valid_static():
-    #         raise ValueError("Trial is not a valid static trial")
+    #         logger.warn("Trial is not a valid static trial")
     #     import mujoco as mjc
     #     spec = mjc.MjSpec.from_file(unscaled_model_path)
         

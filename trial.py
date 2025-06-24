@@ -1,12 +1,13 @@
 import ezc3d
 from pydantic import BaseModel, model_validator, field_validator
 from enum import Enum
-from typing import Any, Annotated, Type, TypeVar
+from typing import Any, Type, TypeVar
 import numpy as np
 from loguru import logger
 import polars as pl
 import os
 import opensim as osim
+from collections import defaultdict
 
 # Define a TypeVar that is bound by the Trial class itself
 # This means _T can be Trial or any subclass of Trial.
@@ -143,6 +144,11 @@ class MarkerTrajectory(BaseModel):
         """Return coordinates as numpy array (n_frames, 3)"""
         return self.data.select(['x', 'y', 'z']).to_numpy()
     
+    @property
+    def residual(self) -> np.ndarray:
+        """Return residuals as numpy array (n_frames,)"""
+        return self.data.select(['residual']).to_numpy().flatten()
+
     def __len__(self) -> int:
         return len(self.data)
     
@@ -242,25 +248,95 @@ class AnalogChannel(BaseModel):
     offset: float = 0.0
     
 class EZC3DForcePlatform(BaseModel):
+    class Config:
+        arbitrary_types_allowed = True
+        
     unit_force: str = 'N'  # Default force unit
     unit_moment: str = 'Nm'  # Default moment unit
     unit_position: str = 'm'  # Default position unit
+    cal_matrix: np.ndarray = np.eye(6)  # Calibration matrix for force platform
+    corners: np.ndarray = np.zeros((3, 4))  # 4 corners in 3D space
+    origin: np.ndarray = np.zeros(3)  # Origin of the force platform
+    data: pl.DataFrame = pl.DataFrame()  # Data for the force platform
+    # Moments and center of pressure are expressed in global
     
+    @field_validator('cal_matrix')
+    @classmethod
+    def validate_cal_matrix(cls, v: np.ndarray) -> np.ndarray:
+        """Validate that the calibration matrix is 6x6"""
+        if v.shape != (6, 6):
+            raise ValueError("Calibration matrix must be 6x6")
+        return v
     
-# class ForcePlatform(BaseModel):
-#     corners: Annotated[np.ndarray, '4x3 array of corner coordinates'] = np.zeros((4, 3)) # 4 corners in 3D space
-#     origin: Annotated[np.ndarray, '3x1 origin coordinate'] = np.zeros(3) # Origin of the force platform
-#     type: int 
-#     channels: dict[str, AnalogChannel] = {} # Map of channel names to AnalogChannel objects     
+    @field_validator('corners')
+    @classmethod
+    def validate_corners(cls, v: np.ndarray) -> np.ndarray:
+        """Validate that the corners are a 3x4 array"""
+        if v.shape != (3, 4):
+            raise ValueError("Corners must be a 3x4 array")
+        return v
     
-# class NexusForcePlate(Analog):
-#     context: str
-#     local_r: Annotated[np.ndarray, '3x3 local rotation matrix'] = np.eye(3) #TODO: Maybe use numpydantic
-#     local_t: Annotated[np.ndarray, '3x1 local translation vector'] = np.zeros(3)
-#     world_r: Annotated[np.ndarray, '3x3 world rotation matrix'] = np.eye(3)
-#     world_t: Annotated[np.ndarray, '3x1 world translation vector'] = np.zeros(3)
-#     lower_bounds: Annotated[np.ndarray, '3x1 lower bounds'] = np.array([-np.inf, -np.inf, -np.inf])
-#     upper_bounds: Annotated[np.ndarray, '3x1 upper bounds'] = np.array([np.inf, np.inf, np.inf])
+    @field_validator('origin')
+    @classmethod
+    def validate_origin(cls, v: np.ndarray) -> np.ndarray:
+        """Validate that the origin is a 3D vector"""
+        if v.shape != (3,):
+            raise ValueError("Origin must be a 3D vector")
+        return v
+    
+    @field_validator('data')
+    @classmethod
+    def validate_data_structure(cls, v: pl.DataFrame) -> pl.DataFrame:
+        """Validate that the DataFrame has the required columns"""
+        required_columns = ['force_x', 'force_y', 'force_z', 
+                            'moment_x', 'moment_y', 'moment_z', 
+                            'center_of_pressure_x', 'center_of_pressure_y', 'center_of_pressure_z', 
+                            'free_moment_x', 'free_moment_y', 'free_moment_z']
+
+        if not all(col in v.columns for col in required_columns):
+            missing = [col for col in required_columns if col not in v.columns]
+            raise ValueError(f"Missing required columns: {missing}")
+        
+        # Ensure correct data types
+        try:
+            v = v.with_columns([
+                pl.col('force_x').cast(pl.Float64),
+                pl.col('force_y').cast(pl.Float64),
+                pl.col('force_z').cast(pl.Float64),
+                pl.col('moment_x').cast(pl.Float64),
+                pl.col('moment_y').cast(pl.Float64),
+                pl.col('moment_z').cast(pl.Float64),
+                pl.col('center_of_pressure_x').cast(pl.Float64),
+                pl.col('center_of_pressure_y').cast(pl.Float64),
+                pl.col('center_of_pressure_z').cast(pl.Float64),
+                pl.col('free_moment_x').cast(pl.Float64),
+                pl.col('free_moment_y').cast(pl.Float64),
+                pl.col('free_moment_z').cast(pl.Float64)                
+            ])
+        except Exception as e:
+            raise ValueError(f"Error casting columns to correct types: {e}")
+        return v
+    
+    @property
+    def force(self) -> np.ndarray:
+        """Return force as a numpy array (n_frames, 3)"""
+        return self.data.select(['force_x', 'force_y', 'force_z']).to_numpy()
+    
+    @property
+    def moment(self) -> np.ndarray:
+        """Return moment as a numpy array (n_frames, 3)"""
+        return self.data.select(['moment_x', 'moment_y', 'moment_z']).to_numpy()
+    
+    @property
+    def center_of_pressure(self) -> np.ndarray:
+        """Return center of pressure as a numpy array (n_frames, 3)"""
+        return self.data.select(['center_of_pressure_x', 'center_of_pressure_y', 'center_of_pressure_z']).to_numpy()
+    
+    @property
+    def free_moment(self) -> np.ndarray:
+        """Return free moment as a numpy array (n_frames, 3)"""
+        return self.data.select(['free_moment_x', 'free_moment_y', 'free_moment_z']).to_numpy()
+
 
 class Analogs(TimeSeriesGroup):
     # Analogs store different channels each of which could have different units
@@ -315,6 +391,7 @@ class Trial(BaseModel):
     point_gaps: dict[str, list[tuple[int, int]]] = {}
     
     analogs: Analogs
+    force_platforms: list[EZC3DForcePlatform] = [] # List of force platforms, if any
     
     def get_events(self, label: str = "", context: str = "") -> list[Event]:
         """
@@ -346,10 +423,12 @@ class Trial(BaseModel):
     
     def to_sto(self,
                filepath: str,
+               rotation: np.ndarray = np.eye(3),
                ):
         """
         Export the analog data to OpenSim .sto file format.
         """
+        raise DeprecationWarning("The to_sto method is deprecated. Use the opensim.STOFileAdapter directly instead.")
         import opensim as osim
         table = osim.TimeSeriesTable()
         table.addTableMetaDataString("nColumns", str(len(self.analogs.channels)))
@@ -357,6 +436,7 @@ class Trial(BaseModel):
         table.setColumnLabels(list(self.analogs.channels.keys()))
         time_col = self.analogs.time
         analogs_df = self.analogs.to_df()
+        # Rotate the coordinates
         analogs_df = analogs_df.with_columns(pl.Series('time', time_col))
         for row in analogs_df.iter_rows(named=True):
             time = row['time']
@@ -444,7 +524,39 @@ class Trial(BaseModel):
             
         subject_names = cls._get_c3d_param(c3d_object, 'SUBJECTS', 'NAMES', default=[])
 
-        # FORCE_PLATFORM - # TODO
+        # FORCE_PLATFORM - Using ezc3d's force platform filter
+        c3d_force_platforms = c3d_data['platform']
+        force_platforms = []  # Reset force platforms
+        for fp in c3d_force_platforms:
+            # Convert to EZC3DForcePlatform
+            force = fp.get('force', [[]])
+            moment = fp.get('moment', [[]])
+            position = fp.get('center_of_pressure', [[]])
+            free_moment = fp.get('Tz', [])
+            ezc3d_fp = EZC3DForcePlatform(
+                unit_force=fp.get('unit_force', 'N'),
+                unit_moment=fp.get('unit_moment', 'Nm'),
+                unit_position=fp.get('unit_position', 'm'),
+                cal_matrix=np.array(fp.get('cal_matrix', np.eye(6))),
+                corners=np.array(fp.get('corners', np.zeros((4, 3)))),
+                origin=np.array(fp.get('origin', np.zeros(3))),
+                data=pl.DataFrame({
+                    'force_x': force[0, :],
+                    'force_y': force[1, :],
+                    'force_z': force[2, :],
+                    'moment_x': moment[0, :],
+                    'moment_y': moment[1, :],
+                    'moment_z': moment[2, :],
+                    'center_of_pressure_x': position[0, :],
+                    'center_of_pressure_y': position[1, :],
+                    'center_of_pressure_z': position[2, :],
+                    'free_moment_x': free_moment[0, :],
+                    'free_moment_y': free_moment[1, :],
+                    'free_moment_z': free_moment[2, :]
+                })
+            )
+            force_platforms.append(ezc3d_fp)
+
         # EVENT_CONTEXT - not currently using
         # EVENT
         events = []
@@ -547,7 +659,8 @@ class Trial(BaseModel):
                 rate=analogs_rate,
                 channels=channels,
                 gen_scale=analog_gen_scale,
-            )
+            ),
+            force_platforms=force_platforms,
         )
            
     @classmethod
@@ -694,32 +807,108 @@ class Trial(BaseModel):
         ik_tool.run()
         self.link_file(OpenSimOutput.IK, ik_results_path)
 
+
     def export_force_platforms(self, 
-                               filepath: str, 
-                               force_platforms: list[AnalogChannel],
-        ):
+                               output_dir: str, 
+                               applied_bodies: dict[int, str], # Expected to be a dict of {platform_index: body_name} where platform_index is 1-based
+                               force_expressed_in_body: str = 'ground',
+                               point_expressed_in_body: str = 'ground', 
+                               force_identifier: str = r'force%d_v',
+                               point_identifier: str = r'force%d_p',
+                               torque_identifier: str = r'moment%d_',
+                               rotation: np.ndarray = np.eye(3),
+                               mot_filename: str | None = None,
+                               external_loads_filename: str | None = None,
+                               unit_force: str = 'N',
+                               unit_position: str = 'm',
+                               unit_moment: str = 'Nm',
+                               metadata: dict[str, Any] = {}
+                               ):
         """
-        Export force plate metadata to OpenSim ExternalLoads .xml file and the data to a .sto file.
+        Export force plate metadata to OpenSim ExternalLoads .xml file and the data to a .mot file.
+        
+        For now, extract foot contact from .enf files, but in the future use contact 
         """
         ext_loads = osim.ExternalLoads()
-        ext_loads.setDataFileName(f"{self.name}_external_loads.sto")
+
+        if external_loads_filename is None:
+            external_loads_filename = f"{self.name}_fp_setup.xml"
+        external_loads_filepath = os.path.join(output_dir, external_loads_filename)
         
-        for fp in force_platforms:
+        if mot_filename is None:
+            mot_filename = f"{self.name}_FP.mot"
+        mot_filepath = os.path.join(output_dir, mot_filename)
+        mot_labels = []
+        mot_table = osim.TimeSeriesTable()
+        time_col = self.analogs.time
+
+        data = np.zeros((len(self.force_platforms)*9, len(time_col)))  # 3 forces, 3 moments, 3 center of pressure
+        for i, fp in enumerate(self.force_platforms): 
+            display_i = i + 1  # For display purposes, OpenSim uses 1-based indexing
+            # Create ExternalForce for each force platform        
             ext_force = osim.ExternalForce()
-            ext_force.setName('')
-            ext_force.setAppliedToBodyName('')
+            ext_force.setName(f'FP{str(display_i)}')
+            ext_force.setAppliedToBodyName(applied_bodies[display_i] if display_i in applied_bodies else '')
+
+            ext_force.setForceExpressedInBodyName(force_expressed_in_body)
+            fp_force_identifier = force_identifier % (display_i)
+            ext_force.setForceIdentifier(fp_force_identifier)
+
+            ext_force.setPointExpressedInBodyName(point_expressed_in_body)
+            fp_point_identifier = point_identifier % (display_i)
+            ext_force.setPointIdentifier(fp_point_identifier)
+
+            fp_torque_identifier = torque_identifier % (display_i)
+            ext_force.setTorqueIdentifier(fp_torque_identifier)
             
-            ext_force.setForceExpressedInBodyName('')
-            ext_force.setForceIdentifier('')
-            
-            ext_force.setPointExpressedInBodyName('')
-            ext_force.setPointIdentifier('')
-            
-            ext_force.setTorqueIdentifier('')
-            
-            ext_force.set_data_source_name('') # relative 
+            ext_force.set_data_source_name(mot_filename) 
             
             ext_loads.cloneAndAppend(ext_force)
+            
+            # Determine conversion factors for units
+            force_conversion_factor, position_conversion_factor, moment_conversion_factor = 1.0, 1.0, 1.0
+            if fp.unit_force != unit_force:
+                logger.warning(f"Force platform {display_i} force unit {fp.unit_force} does not match output unit {unit_force}. Converting forces.")
+                current_units = osim.Units(fp.unit_force)
+                force_conversion_factor = current_units.convertTo(osim.Units(unit_force))
+            if fp.unit_position != unit_position:
+                logger.warning(f"Force platform {display_i} position unit {fp.unit_position} does not match output unit {unit_position}. Converting positions.")
+                current_units = osim.Units(fp.unit_position)
+                position_conversion_factor = current_units.convertTo(osim.Units(unit_position))
+            if fp.unit_moment != unit_moment:
+                logger.warning(f"Force platform {display_i} torque unit {fp.unit_moment} does not match output unit {unit_moment}. Converting torques.")
+                current_units = osim.Units(fp.unit_moment)
+                moment_conversion_factor = current_units.convertTo(osim.Units(unit_moment))
+                
+            # Rotate the force platform data
+            force = np.array(rotation @ np.array(fp.force).T).T * force_conversion_factor * -1.0 # OpenSim expects forces to be in the opposite direction
+            cop = np.array(rotation @ np.array(fp.center_of_pressure).T).T * position_conversion_factor 
+            free_moment = np.array(rotation @ np.array(fp.free_moment).T).T * moment_conversion_factor * -1.0 # OpenSim expects moments to be in the opposite direction
+            mot_labels.extend([fp_force_identifier + coord for coord in 'xyz'])
+            mot_labels.extend([fp_torque_identifier + coord for coord in 'xyz'])
+            mot_labels.extend([fp_point_identifier + coord for coord in 'xyz'])  # This could be precomputed, but having it next to the data makes it clear what order it should be added
+            data[i*9:i*9+3, :] = force.T  # 3 forces
+            data[i*9+3:i*9+6, :] = free_moment.T  # 3 moments
+            data[i*9+6:i*9+9, :] = cop.T  # 3 center of pressure
+        for i in range(len(time_col)):
+            mot_table.appendRow(time_col[i], osim.RowVector(data[:, i]))
+
+        print(f"Writing {len(mot_labels)} labels to MOT file: {mot_labels}")
+        mot_table.setColumnLabels(mot_labels)
+
+        for key, value in metadata.items():
+            mot_table.addTableMetaDataString(key, str(value))
+
+        if 'nRows' not in metadata:
+            n_frames = self.force_platforms[0].data.height # Assuming all platforms have the same number of frames
+            mot_table.addTableMetaDataString('nRows', str(n_frames))
+        if 'nColumns' not in metadata:
+            n_columns = len(self.force_platforms) * 9  # 3 forces, 3 moments, 3 center of pressure
+            mot_table.addTableMetaDataString('nColumns', str(n_columns))
+        adapter = osim.STOFileAdapter()
+        adapter.write(mot_table, mot_filepath)
+        ext_loads.setDataFileName(mot_filename)
+        ext_loads.printToXML(external_loads_filepath)
 
     def run_opensim_id(self, 
                         model_path: str, 
