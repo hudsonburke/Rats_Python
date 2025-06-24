@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 from loguru import logger
-from trial import Trial
+from trial import Trial, Event
 from enum import Enum
 from pydantic import model_validator
 import numpy as np
@@ -112,6 +112,71 @@ class RatTrial(Trial):
         # Check for force plate contexts labeled for left and right
         
         return True
+
+    def get_stance_phases(self, side: str) -> list[tuple[Event, Event]]:
+        """
+        Get the stance phase for a specific side.
+        Stance phase is defined as the time between foot strike and foot off events for that side.
+        """
+        stance_phases = []
+        foot_strike = None
+        foot_off = None
+        for event in self.events:
+            if event.context == side:
+                if event.label == "Foot Strike":
+                    foot_strike = event
+                elif event.label == "Foot Off" and foot_strike:
+                    foot_off = event
+            if foot_strike and foot_off:
+                stance_phases.append((foot_strike, foot_off))
+                foot_strike = None
+                foot_off = None
+        return stance_phases
+    
+    def get_swing_phases(self, side: str) -> list[tuple[Event, Event]]:
+        """
+        Get the swing phase for a specific side.
+        Swing phase is defined as the time between foot off and next foot strike events for that side.
+        """
+        swing_phases = []
+        foot_off = None
+        next_foot_strike = None
+        for event in self.events:
+            if event.context == side:
+                if event.label == "Foot Off":
+                    foot_off = event
+                elif event.label == "Foot Strike" and foot_off:
+                    next_foot_strike = event
+            if foot_off and next_foot_strike:
+                swing_phases.append((foot_off, next_foot_strike))
+                foot_off = None
+                next_foot_strike = None
+        return swing_phases
+    
+    def get_stance_swing_phases(self, side: str) -> list[tuple[Event, Event, Event]]:
+        """
+        Get the coupled stance and swing phases for a specific side.
+        Each tuple contains (foot strike, foot off, next foot strike).
+        """
+        stance_swing_phases = []
+        foot_strike = None
+        foot_off = None
+        next_foot_strike = None
+        for event in self.events:
+            if event.context == side:
+                if event.label == "Foot Strike" and not foot_strike:
+                    foot_strike = event
+                elif event.label == "Foot Off" and foot_strike:
+                    foot_off = event
+                elif event.label == "Foot Strike" and foot_off:
+                    next_foot_strike = event
+            if foot_strike and foot_off and next_foot_strike:
+                stance_swing_phases.append((foot_strike, foot_off, next_foot_strike))
+                foot_strike = None
+                foot_off = None
+                next_foot_strike = None
+        return stance_swing_phases
+        
 
     # Spatiotemporal parameters  -- Currently following Huxham et al. 2006 for straight line gait
     # TODO: Implement Dingwell 2024 calculations
@@ -495,7 +560,7 @@ class RatTrial(Trial):
     #     spec.to_xml()
     
     
-    
+import polars as pl
 class RatSession(BaseModel):
     """
     Represents a session of rat trials.
@@ -506,23 +571,10 @@ class RatSession(BaseModel):
     static_trial: RatTrial | None = None
     walk_trials: list[RatTrial] = []
     
-    
     @model_validator(mode='after')
-    def _check_trials(self):
+    def check_trials(self):
         if not self.static_trials:
             raise ValueError("Session must contain at least one static trial")
-        if not self.walk_trials:
-            logger.warning("Session has no walk trials, some analyses may not be applicable")
-        return self
-       
-    
-    def opensim_analysis(self,
-                        unscaled_model_path: str,
-                        marker_set_path: str,
-                        marker_file_name: str,
-                        output_dir: str = '.',
-                        scale_setup_path: str | None = None,
-                        ):
         # Iterate backwards until we find a valid static trial since later Static trials are more likely to be used
         for trial in reversed(self.static_trials):
             if trial.valid_static():
@@ -531,24 +583,7 @@ class RatSession(BaseModel):
                 break
         else:
             raise ValueError("No valid static trial found for OpenSim analysis")
-        # Ensure there is a scaled marker model
-        marker_model_path = self.static_trial.get_linked_file('marker_model')
-        if not marker_model_path:
-            self.static_trial.scale_opensim_model(unscaled_model_path, 
-                                                    marker_set_path, 
-                                                    marker_file_name, 
-                                                    output_dir, 
-                                                    scale_setup_path)
-            marker_model_path = self.static_trial.get_linked_file('marker_model')
-        
-        # Process walk trials
-        for trial in self.walk_trials:
-            if not trial.valid_walk():
-                logger.info(f"Trial {trial.name} is not a valid walk trial, skipping OpenSim analysis")
-                continue
-            # TRC
-            trial.to_trc()
-            # IK
-            # FP
-            # ID
-            pass
+        if not self.walk_trials:
+            logger.warning("Session has no walk trials, some analyses may not be applicable")
+        return self
+       

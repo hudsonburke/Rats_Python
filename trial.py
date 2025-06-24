@@ -7,7 +7,6 @@ from loguru import logger
 import polars as pl
 import os
 import opensim as osim
-from collections import defaultdict
 
 # Define a TypeVar that is bound by the Trial class itself
 # This means _T can be Trial or any subclass of Trial.
@@ -29,7 +28,7 @@ class Event(BaseModel):
     Times will default to being stored in seconds.
     See c3d event specification for details.
     """
-    label: str
+    label: str # TODO: enforce lowercase label and context
     context: str
     frame: int | None = None
     time: float | None = None
@@ -689,6 +688,20 @@ class Trial(BaseModel):
         return trial 
 
     @classmethod
+    def from_pkl(cls: Type[_T], path: str) -> _T:
+        """
+        Load a Trial from a pickle file.
+        Args:
+            path (str): Path to the pickle file.
+        Returns:
+            Trial: The loaded Trial object.
+        """
+        import pickle
+        with open(path, 'rb') as f:
+            data = pickle.load(f)
+        return data
+
+    @classmethod
     def from_vicon_nexus(cls) -> 'Trial':
         """
         Create a Trial instance from an open trial in Vicon Nexus.
@@ -807,7 +820,6 @@ class Trial(BaseModel):
         self.link_file(OpenSimOutput.IK_SETUP, out_ik_setup_path)
         ik_tool.run()
         self.link_file(OpenSimOutput.IK, ik_results_path)
-
 
     def export_force_platforms(self, 
                                output_dir: str, 
