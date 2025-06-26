@@ -1,10 +1,10 @@
+[conda-forge]
 polars
 ezc3d
-patito
 pydantic
 loguru
 numpy
-plotly
 matplotlib
 scipy
+[opensim-org]
 opensim

@@ -627,7 +627,7 @@ class Trial(BaseModel):
                 y=point_data[1, i, :].tolist(), 
                 z=point_data[2, i, :].tolist(),
                 residual=residuals[0, i, :].tolist(),
-                description=point_descriptions[i]
+                description=point_descriptions[i] if i < len(point_descriptions) else '',
             )
             trajectories[label] = trajectory
     
@@ -647,10 +647,10 @@ class Trial(BaseModel):
         for i, label in enumerate(analog_labels):
             channels[label] = AnalogChannel(
                 data=analog_data[0, i, :].tolist(),  # Convert to list for compatibility
-                units=analog_units[i] or '',
-                description=analog_descriptions[i] or '',
-                scale=analog_scales[i],
-                offset=analog_offsets[i]
+                units=analog_units[i] if i < len(analog_units) else '',
+                description=analog_descriptions[i] if i < len(analog_descriptions) else '',
+                scale=analog_scales[i] if i < len(analog_scales) else 1.0,
+                offset=analog_offsets[i] if i < len(analog_offsets) else 0.0
             )    
         return cls(
             name=trial_name,
@@ -878,8 +878,8 @@ class Trial(BaseModel):
             fp_point_identifier = point_identifier % (display_i)
             fp_torque_identifier = torque_identifier % (display_i)
             mot_labels.extend([fp_force_identifier + coord for coord in 'xyz'])
-            mot_labels.extend([fp_torque_identifier + coord for coord in 'xyz'])
             mot_labels.extend([fp_point_identifier + coord for coord in 'xyz'])  # This could be precomputed, but having it next to the data makes it clear what order it should be added
+            mot_labels.extend([fp_torque_identifier + coord for coord in 'xyz'])
             if display_i not in applied_bodies:
                 logger.warning(f"Force platform {display_i} does not have an applied body defined. Skipping.")
                 continue
@@ -917,12 +917,13 @@ class Trial(BaseModel):
                 
             # Rotate the force platform data
             force = np.array(rotation @ np.array(fp.force).T).T * force_conversion_factor * -1.0 # OpenSim expects forces to be in the opposite direction
-            free_moment = np.array(rotation @ np.array(fp.free_moment).T).T * moment_conversion_factor * -1.0 # OpenSim expects moments to be in the opposite direction
             cop = np.array(rotation @ np.array(fp.center_of_pressure).T).T * position_conversion_factor 
+            free_moment = np.array(rotation @ np.array(fp.free_moment).T).T * moment_conversion_factor * -1.0 # OpenSim expects moments to be in the opposite direction
             
             data[i*9:i*9+3, :] = force.T  # 3 forces
-            data[i*9+3:i*9+6, :] = free_moment.T  # 3 moments
-            data[i*9+6:i*9+9, :] = cop.T  # 3 center of pressure
+            data[i*9+3:i*9+6, :] = cop.T  # 3 center of pressure
+            data[i*9+6:i*9+9, :] = free_moment.T  # 3 moments
+            
         for i in range(len(time_col)):
             mot_table.appendRow(time_col[i], osim.RowVector(data[:, i]))
 
